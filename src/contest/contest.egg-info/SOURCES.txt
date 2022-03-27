@@ -1,0 +1,6 @@
+README.md
+setup.py
+contest/contest.egg-info/PKG-INFO
+contest/contest.egg-info/SOURCES.txt
+contest/contest.egg-info/dependency_links.txt
+contest/contest.egg-info/top_level.txt

@@ -6,8 +6,8 @@ def main():
         name='contest',
         version='0.0.1',
         author="Javier Segovia-Aguas and Vicenç Gómez",
-        packages=find_packages('contest'),
-        package_dir={'': 'contest'},
+        packages=find_packages('src'),
+        package_dir={'': 'src'},
         setup_requires=['wheel'],
     )
 
