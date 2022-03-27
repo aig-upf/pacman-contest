@@ -12,9 +12,9 @@
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
 
 
-from graphicsUtils import *
+from contest.graphicsUtils import *
 import math, time
-from game import Directions
+from contest.game import Directions
 
 ###########################
 #  GRAPHICS DISPLAY CODE  #

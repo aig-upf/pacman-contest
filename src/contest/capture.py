@@ -57,12 +57,12 @@ import sys
 import time
 import traceback
 
-import keyboardAgents
-from game import Actions
-from game import GameStateData, Game, Grid, Configuration
-from util import nearestPoint, manhattanDistance
+import contest.keyboardAgents as keyboardAgents
+from contest.game import Actions
+from contest.game import GameStateData, Game, Grid, Configuration
+from contest.util import nearestPoint, manhattanDistance
 
-DIR_SCRIPT = sys.path[0] + "/contest/"
+DIR_SCRIPT = sys.path[0] + "/src/contest/"
 
 # If you change these, you won't affect the server, so you can't cheat
 KILL_POINTS = 0
@@ -831,17 +831,17 @@ def read_command(argv):
     #   import pygameDisplay
     #    args['display'] = pygameDisplay.PacmanGraphics()
     if parsed_options.textgraphics:
-        import textDisplay
+        import contest.textDisplay as textDisplay
         args['display'] = textDisplay.PacmanGraphics()
     elif parsed_options.quiet or parsed_options.replayq:
-        import textDisplay
+        import contest.textDisplay as textDisplay
         args['display'] = textDisplay.NullGraphics()
     elif parsed_options.super_quiet:
-        import textDisplay
+        import contest.textDisplay as textDisplay
         args['display'] = textDisplay.NullGraphics()
         args['mute_agents'] = True
     else:
-        import captureGraphicsDisplay
+        import contest.captureGraphicsDisplay as captureGraphicsDisplay
         # Hack for agents writing to the display
         captureGraphicsDisplay.FRAME_TIME = 0
         args['display'] = captureGraphicsDisplay.PacmanGraphics(parsed_options.red, parsed_options.red_name,
@@ -926,7 +926,7 @@ def read_command(argv):
         args['agents'][index] = agent
 
     # Choose a layout
-    import layout
+    import contest.layout as layout
     layouts = []
     for i in range(parsed_options.num_games):
         if parsed_options.layout == 'RANDOM':
@@ -958,7 +958,7 @@ def random_layout(seed=None):
         seed = random.randint(0, 99999999)
     # layout = 'layouts/random%08dCapture.lay' % seed
     # print 'Generating random layout in %s' % layout
-    import mazeGenerator
+    import contest.mazeGenerator as mazeGenerator
     return mazeGenerator.generateMaze(seed)
 
 
@@ -1078,7 +1078,7 @@ def run_games(layouts, agents, display, length, num_games, record, num_training,
         layout = layouts[i]
         if be_quiet:
             # Suppress output and graphics
-            import textDisplay
+            import contest.textDisplay as textDisplay
             game_display = textDisplay.NullGraphics()
             rules.quiet = True
         else:
@@ -1092,7 +1092,7 @@ def run_games(layouts, agents, display, length, num_games, record, num_training,
         if record:
             import time
             import pickle
-            import game
+            import contest.game as game
             components = {'layout': layout, 'agents': [game.Agent() for _ in agents], 'actions': g.move_history,
                           'length': length, 'red_team_name': red_team_name, 'blue_team_name': blue_team_name}
             print("recorded")

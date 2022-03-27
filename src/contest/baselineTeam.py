@@ -21,11 +21,11 @@
 # For more info, see http://inst.eecs.berkeley.edu/~cs188/sp09/pacman.html
 
 import random
-import util
+import contest.util as util
 
-from captureAgents import CaptureAgent
-from game import Directions
-from util import nearestPoint
+from contest.captureAgents import CaptureAgent
+from contest.game import Directions
+from contest.util import nearestPoint
 
 
 #################

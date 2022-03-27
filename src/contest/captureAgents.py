@@ -17,10 +17,10 @@
 """
 import random
 
-import distanceCalculator
-import util
-from game import Agent
-from util import nearestPoint
+import contest.distanceCalculator as distanceCalculator
+import contest.util as util
+from contest.game import Agent
+from contest.util import nearestPoint
 
 
 # Note: the following class is not used, but is kept for backwards

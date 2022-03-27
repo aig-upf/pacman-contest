@@ -39,13 +39,14 @@ code to run a game.  This file is divided into three sections:
 To play your first game, type 'python pacman.py' from the command line.
 The keys are 'a', 's', 'd', and 'w' to move (or arrow keys).  Have fun!
 """
-from game import GameStateData
-from game import Game
-from game import Directions
-from game import Actions
-from util import nearestPoint
-from util import manhattanDistance
-import util, layout
+from contest.game import GameStateData
+from contest.game import Game
+from contest.game import Directions
+from contest.game import Actions
+from contest.util import nearestPoint
+from contest.util import manhattanDistance
+import contest.util as util
+import contest.layout as layout
 import sys, types, time, random, os
 
 ###################################################
@@ -557,14 +558,14 @@ def readCommand( argv ):
 
     # Choose a display format
     if options.quietGraphics:
-        import textDisplay
+        import contest.textDisplay as textDisplay
         args['display'] = textDisplay.NullGraphics()
     elif options.textGraphics:
-        import textDisplay
+        import contest.textDisplay as textDisplay
         textDisplay.SLEEP_TIME = options.frame_time
         args['display'] = textDisplay.PacmanGraphics()
     else:
-        import graphicsDisplay
+        import contest.graphicsDisplay as graphicsDisplay
         args['display'] = graphicsDisplay.PacmanGraphics(options.zoom, frame_time= options.frame_time)
     args['numGames'] = options.numGames
     args['record'] = options.record
@@ -608,7 +609,8 @@ def loadAgent(pacman, nographics):
     raise Exception('The agent ' + pacman + ' is not specified in any *Agents.py.')
 
 def replayGame( layout, actions, display ):
-    import pacmanAgents, ghostAgents
+    import contest.pacmanAgents as pacmanAgents
+    import contest.ghostAgents as ghostAgents
     rules = ClassicGameRules()
     agents = [pacmanAgents.GreedyAgent()] + [ghostAgents.RandomGhost(i+1) for i in range(layout.get_num_ghosts())]
     game = rules.newGame( layout, agents[0], agents[1:], display )
@@ -636,7 +638,7 @@ def runGames( layout, pacman, ghosts, display, numGames, record, numTraining = 0
         beQuiet = i < numTraining
         if beQuiet:
                 # Suppress output and graphics
-            import textDisplay
+            import contest.textDisplay as textDisplay
             gameDisplay = textDisplay.NullGraphics()
             rules.quiet = True
         else:

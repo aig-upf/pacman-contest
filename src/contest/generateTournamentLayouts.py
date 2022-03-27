@@ -14,7 +14,7 @@
 
 import sys, random
 
-import mazeGenerator
+import contest.mazeGenerator
 
 """
 This is a helper file which generates the random seeds for the map

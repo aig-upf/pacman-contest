@@ -12,8 +12,8 @@
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
 
 
-from game import Agent
-from game import Directions
+from contest.game import Agent
+from contest.game import Directions
 import random
 
 class KeyboardAgent(Agent):

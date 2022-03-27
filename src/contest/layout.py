@@ -12,8 +12,8 @@
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
 
 
-from util import manhattanDistance
-from game import Grid
+from contest.util import manhattanDistance
+from contest.game import Grid
 import os
 import random
 
@@ -43,7 +43,7 @@ class Layout:
     def initializeVisibilityMatrix(self):
         global VISIBILITY_MATRIX_CACHE
         if reduce(str.__add__, self.layoutText) not in VISIBILITY_MATRIX_CACHE:
-            from game import Directions
+            from contest.game import Directions
             vecs = [(-0.5,0), (0.5,0),(0,-0.5),(0,0.5)]
             dirs = [Directions.NORTH, Directions.SOUTH, Directions.WEST, Directions.EAST]
             vis = Grid(self.width, self.height, {Directions.NORTH:set(), Directions.SOUTH:set(), Directions.EAST:set(), Directions.WEST:set(), Directions.STOP:set()})
