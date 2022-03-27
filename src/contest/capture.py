@@ -62,7 +62,9 @@ from contest.game import Actions
 from contest.game import GameStateData, Game, Grid, Configuration
 from contest.util import nearestPoint, manhattanDistance
 
-DIR_SCRIPT = sys.path[0] + "/src/contest/"
+#DIR_SCRIPT = sys.path[0] + "/src/contest/"
+import contest
+DIR_SCRIPT = '/'.join(contest.__file__.split('/')[:-1])
 
 # If you change these, you won't affect the server, so you can't cheat
 KILL_POINTS = 0
