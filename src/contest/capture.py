@@ -1123,16 +1123,16 @@ def save_score(game, contest_name, game_id=0):
         print(game.state.data.score, file=f)
 
 
-if __name__ == '__main__':
+def run(args):
     """
     The main function called when pacman.py is run from the command line:
     > python capture.py
-    
+
     See the usage string for more details.
     > python capture.py --help
     """
     start_time = time.time()
-    options = read_command(sys.argv[1:])  # Get game components based on input
+    options = read_command(args)  # Get game components based on input
     print(options)
 
     games = run_games(**options)
@@ -1140,3 +1140,11 @@ if __name__ == '__main__':
     if games:
         save_score(game=games[0], contest_name=options['contest_name'], game_id=options['game_id'])
     print('\nTotal Time Game: %s' % round(time.time() - start_time, 0))
+
+
+def main():
+    run(sys.argv[1:])
+
+
+if __name__ == '__main__':
+    main()
