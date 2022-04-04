@@ -534,7 +534,7 @@ def readCommand( argv ):
     if options.fixRandomSeed: random.seed('cs188')
 
     # Choose a layout
-    args['layout'] = layout.getLayout( options.layout )
+    args['layout'] = layout.get_layout(options.layout)
     if args['layout'] == None: raise Exception("The layout " + options.layout + " cannot be found")
 
     # Choose a Pacman agent

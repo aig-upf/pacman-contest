@@ -17,6 +17,6 @@ if __name__ == '__main__':
     games = contest.capture.run_games(**options)
 
     if games:
-        contest.capture.save_score(game=games[0], contest_name=options['contest_name'], game_id=options['game_id'])
+        contest.capture.save_score(games=games[0], contest_name=options['contest_name'], match_id=options['game_id'])
     print('\nTotal Time Game: %s' % round(time.time() - start_time, 0))
 

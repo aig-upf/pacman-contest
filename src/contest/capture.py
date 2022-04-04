@@ -819,7 +819,7 @@ def read_command(argv):
                       help=default('How many episodes are training (suppresses output)'), default=0)
     parser.add_option('-c', '--catch-exceptions', dest='catch_exceptions', action='store_true', default=False,
                       help='Catch exceptions and enforce time limits')
-    parser.add_option('-g', '--game-id', dest='game_id', type='int', default=0,
+    parser.add_option('-m', '--match-id', dest='match_id', type='int', default=0,
                       help='Set the gameplay identifier')
     parser.add_option('-u', '--contest-name', dest='contest_name', type=str, default="default",
                       help="Set the contest name")
@@ -892,7 +892,7 @@ def read_command(argv):
     if parsed_options.record_log:
         sub_folder = f'logs/contest_{parsed_options.contest_name}'
         os.makedirs(name=sub_folder, exist_ok=True)
-        sys.stdout = open(f'{sub_folder}/game_{parsed_options.game_id}.log', 'w')
+        sys.stdout = open(f'{sub_folder}/match_{parsed_options.match_id}.log', 'w')
         sys.stderr = sys.stdout
 
     # Choose a pacman agent
@@ -932,13 +932,16 @@ def read_command(argv):
     layouts = []
     for i in range(parsed_options.num_games):
         if parsed_options.layout == 'RANDOM':
-            layout_generated = layout.Layout(random_layout().split('\n'))
+            layout_name, layout_text = random_layout()
+            layout_generated = layout.Layout(layout_name=layout_name, layout_text=layout_text.split('\n'))
         elif parsed_options.layout.startswith('RANDOM'):
-            layout_generated = layout.Layout(random_layout(int(parsed_options.layout[6:])).split('\n'))
+            seed_chosen = int(parsed_options.layout[6:])
+            layout_name, layout_text = random_layout(seed=seed_chosen)
+            layout_generated = layout.Layout(layout_name=layout_name, layout_text=layout_text.split('\n'))
         elif parsed_options.layout.lower().find('capture') == -1:
             raise Exception('You must use a capture layout with capture.py')
         else:
-            layout_generated = layout.getLayout(parsed_options.layout)
+            layout_generated = layout.get_layout(parsed_options.layout)
         if layout_generated is None: raise Exception(f"The layout {parsed_options.layout} cannot be found")
 
         layouts.append(layout_generated)
@@ -950,7 +953,7 @@ def read_command(argv):
     args['record'] = parsed_options.record
     args['catch_exceptions'] = parsed_options.catch_exceptions
     args['delay_step'] = parsed_options.delay_step
-    args['game_id'] = parsed_options.game_id
+    args['match_id'] = parsed_options.match_id
     args['contest_name'] = parsed_options.contest_name
     return args
 
@@ -961,7 +964,7 @@ def random_layout(seed=None):
     # layout = 'layouts/random%08dCapture.lay' % seed
     # print 'Generating random layout in %s' % layout
     import contest.mazeGenerator as mazeGenerator
-    return mazeGenerator.generateMaze(seed)
+    return f'RANDOM{seed}', mazeGenerator.generateMaze(seed)
 
 
 def load_agents(is_red, agent_file, cmd_line_args):
@@ -1068,7 +1071,7 @@ def replay_game(layout, agents, actions, display, length, red_team_name, blue_te
 
 
 def run_games(layouts, agents, display, length, num_games, record, num_training, red_team_name, blue_team_name,
-              contest_name="default", mute_agents=False, catch_exceptions=False, delay_step=0, game_id=0):
+              contest_name="default", mute_agents=False, catch_exceptions=False, delay_step=0, match_id=0):
     rules = CaptureRules()
     games_list = []
 
@@ -1101,7 +1104,7 @@ def run_games(layouts, agents, display, length, num_games, record, num_training,
             g.record = pickle.dumps(components)
             sub_folder = f'replays/contest_{contest_name}'
             os.makedirs(name=sub_folder, exist_ok=True)
-            with open(f'{sub_folder}/game_{game_id}.replay', 'wb') as f:
+            with open(f'{sub_folder}/match_{match_id}.replay', 'wb') as f:
                 f.write(g.record)
 
     if num_games > 1:
@@ -1116,11 +1119,41 @@ def run_games(layouts, agents, display, length, num_games, record, num_training,
     return games_list
 
 
-def save_score(game, contest_name, game_id=0):
+def get_games_data(games, red_name, blue_name):
+    # (n1, n2, layout, score, winner, time_taken)
+    games_data = []
+    for game in games:
+        layout_name = game.state.data.layout.layout_name
+        score = game.state.data.score
+        if score > 0:
+            winner, score = 0, 1
+        elif score < 0:
+            winner, score = 1, 1
+        else:
+            winner, score = -1, 0
+        time_taken = sum(game.total_agent_times)
+        games_data.append((red_name, blue_name, layout_name, score, winner, time_taken))
+    return games_data
+
+
+def save_score(games, *, contest_name, match_id, **kwargs):
+    assert games
     sub_folder = f'scores/contest_{contest_name}'
     os.makedirs(name=sub_folder, exist_ok=True)
-    with open(f'{sub_folder}/game_{game_id}.score', 'w') as f:
-        print(game.state.data.score, file=f)
+    match_data = {
+        'games': get_games_data(games=games, red_name=kwargs['red_team_name'], blue_name=kwargs['blue_team_name']),
+        'max_steps': games[0].length,
+        'team_stats': {
+            'Blue_team': [6, 2, 0, 0, 0, 2, 2],
+            'Red_team': [0, 0, 0, 0, 2, 2, -2]
+        },
+        'layouts': [game.state.data.layout.layout_name for game in games]
+    }
+
+    import json
+    with open(f'{sub_folder}/match_{match_id}.json', 'w') as f:
+        # print(games.state.data.score, file=f)
+        f.write(json.dumps(match_data))
 
 
 def run(args):
@@ -1138,7 +1171,8 @@ def run(args):
     games = run_games(**options)
 
     if games:
-        save_score(game=games[0], contest_name=options['contest_name'], game_id=options['game_id'])
+        # save_score(games=games, contest_name=options['contest_name'], match_id=options['match_id'])
+        save_score(games=games, **options)
     print('\nTotal Time Game: %s' % round(time.time() - start_time, 0))
 
 

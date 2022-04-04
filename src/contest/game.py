@@ -544,6 +544,7 @@ class Game:
     """
 
     def __init__(self, agents, display, rules, starting_index=0, mute_agents=False, catch_exceptions=False):
+        self.num_moves = None
         self.state = None
         self.agent_crashed = False
         self.agents = agents
@@ -559,6 +560,8 @@ class Game:
         self.agent_timeout = False
         import io
         self.agent_output = [io.StringIO() for _ in agents]
+        self.OLD_STDOUT = None
+        self.OLD_STDERR = None
 
     def get_progress(self):
         if self.game_over:
@@ -573,24 +576,18 @@ class Game:
         self.agent_crashed = True
         self.rules.agent_crash(self, agent_index)
 
-    OLD_STDOUT = None
-    OLD_STDERR = None
-
     def mute(self, agent_index):
         if not self.mute_agents: return
-        global OLD_STDOUT, OLD_STDERR
-        import io
-        OLD_STDOUT = sys.stdout
-        OLD_STDERR = sys.stderr
+        self.OLD_STDOUT = sys.stdout
+        self.OLD_STDERR = sys.stderr
         sys.stdout = self.agent_output[agent_index]
         sys.stderr = self.agent_output[agent_index]
 
     def unmute(self):
         if not self.mute_agents: return
-        global OLD_STDOUT, OLD_STDERR
         # Revert stdout/stderr to originals
-        sys.stdout = OLD_STDOUT
-        sys.stderr = OLD_STDERR
+        sys.stdout = self.OLD_STDOUT
+        sys.stderr = self.OLD_STDERR
 
     def run(self, delay=0):
         """
