@@ -890,7 +890,7 @@ def read_command(argv):
         random.seed(parsed_options.set_random_seed)
 
     if parsed_options.record_log:
-        sub_folder = f'logs/contest_{parsed_options.contest_name}'
+        sub_folder = f'www/contest_{parsed_options.contest_name}/logs'
         os.makedirs(name=sub_folder, exist_ok=True)
         sys.stdout = open(f'{sub_folder}/match_{parsed_options.match_id}.log', 'w')
         sys.stderr = sys.stdout
@@ -1102,7 +1102,7 @@ def run_games(layouts, agents, display, length, num_games, record, num_training,
                           'length': length, 'red_team_name': red_team_name, 'blue_team_name': blue_team_name}
             print("recorded")
             g.record = pickle.dumps(components)
-            sub_folder = f'replays/contest_{contest_name}'
+            sub_folder = f'www/contest_{contest_name}/replays'
             os.makedirs(name=sub_folder, exist_ok=True)
             with open(f'{sub_folder}/match_{match_id}.replay', 'wb') as f:
                 f.write(g.record)
@@ -1138,7 +1138,7 @@ def get_games_data(games, red_name, blue_name):
 
 def save_score(games, *, contest_name, match_id, **kwargs):
     assert games
-    sub_folder = f'scores/contest_{contest_name}'
+    sub_folder = f'www/contest_{contest_name}/scores'
     os.makedirs(name=sub_folder, exist_ok=True)
     match_data = {
         'games': get_games_data(games=games, red_name=kwargs['red_team_name'], blue_name=kwargs['blue_team_name']),
