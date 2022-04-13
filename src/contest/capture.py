@@ -1119,35 +1119,63 @@ def run_games(layouts, agents, display, length, num_games, record, num_training,
     return games_list
 
 
-def get_games_data(games, red_name, blue_name):
+def get_games_data(games, red_name, blue_name, match_id):
     # (n1, n2, layout, score, winner, time_taken)
     games_data = []
     for game in games:
         layout_name = game.state.data.layout.layout_name
         score = game.state.data.score
         if score > 0:
-            winner, score = 0, 1
+            winner, score = red_name, score
         elif score < 0:
-            winner, score = 1, 1
+            winner, score = blue_name, -score
         else:
-            winner, score = -1, 0
-        time_taken = sum(game.total_agent_times)
-        games_data.append((red_name, blue_name, layout_name, score, winner, time_taken))
+            winner, score = None, 0
+        # time_taken = sum(game.total_agent_times)
+        time_taken = game.num_moves
+        games_data.append((red_name, blue_name, layout_name, score, winner, time_taken, match_id))
     return games_data
+
+
+def compute_team_stats(games_data, team_name):
+    wins, draws, loses, score = 0, 0, 0, 0
+    for gd in games_data:  # gd[4] is the winner
+        if gd[4] is None:
+            draws += 1
+        elif gd[4] is team_name:
+            wins += 1
+            score += gd[3]  # gd[3] is the final score
+        else:
+            loses += 1
+    points = (wins * 3) + draws
+    return [
+        ((points * 100) / (3 * (wins + draws + loses))) if wins + draws + loses > 0 else 0,
+        points,
+        wins,
+        draws,
+        loses,
+        0,  # errors not counted
+        score,
+    ]
 
 
 def save_score(games, *, contest_name, match_id, **kwargs):
     assert games
     sub_folder = f'www/contest_{contest_name}/scores'
     os.makedirs(name=sub_folder, exist_ok=True)
+    games_data = get_games_data(games=games,
+                                red_name=kwargs['red_team_name'],
+                                blue_name=kwargs['blue_team_name'],
+                                match_id=match_id)
+    teams_stats = {
+        kwargs['red_team_name']: compute_team_stats(games_data=games_data, team_name=kwargs['red_team_name']),
+        kwargs['blue_team_name']: compute_team_stats(games_data=games_data, team_name=kwargs['blue_team_name']),
+    }
     match_data = {
-        'games': get_games_data(games=games, red_name=kwargs['red_team_name'], blue_name=kwargs['blue_team_name']),
+        'games': games_data,
         'max_steps': games[0].length,
-        'team_stats': {
-            'Blue_team': [6, 2, 0, 0, 0, 2, 2],
-            'Red_team': [0, 0, 0, 0, 2, 2, -2]
-        },
-        'layouts': [game.state.data.layout.layout_name for game in games]
+        'teams_stats': teams_stats,
+        'layouts': [game.state.data.layout.layout_name for game in games],
     }
 
     import json
@@ -1166,14 +1194,14 @@ def run(args):
     """
     start_time = time.time()
     options = read_command(args)  # Get game components based on input
-    print(options)
+    print(options, file=sys.stdout)
 
     games = run_games(**options)
 
     if games:
         # save_score(games=games, contest_name=options['contest_name'], match_id=options['match_id'])
         save_score(games=games, **options)
-    print('\nTotal Time Game: %s' % round(time.time() - start_time, 0))
+    print(f'\nTotal Time Game: {round(time.time() - start_time, 0)}', file=sys.stdout)
 
 
 def main():
