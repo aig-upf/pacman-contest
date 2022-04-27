@@ -1119,7 +1119,7 @@ def run_games(layouts, agents, display, length, num_games, record, num_training,
     return games_list
 
 
-def get_games_data(games, red_name, blue_name, match_id):
+def get_games_data(games, red_name, blue_name, time_taken, match_id):
     # (n1, n2, layout, score, winner, time_taken)
     games_data = []
     for game in games:
@@ -1131,8 +1131,6 @@ def get_games_data(games, red_name, blue_name, match_id):
             winner, score = blue_name, -score
         else:
             winner, score = None, 0
-        # time_taken = sum(game.total_agent_times)
-        time_taken = game.num_moves
         games_data.append((red_name, blue_name, layout_name, score, winner, time_taken, match_id))
     return games_data
 
@@ -1159,13 +1157,14 @@ def compute_team_stats(games_data, team_name):
     ]
 
 
-def save_score(games, *, contest_name, match_id, **kwargs):
+def save_score(games, total_time, *, contest_name, match_id, **kwargs):
     assert games
     sub_folder = f'www/contest_{contest_name}/scores'
     os.makedirs(name=sub_folder, exist_ok=True)
     games_data = get_games_data(games=games,
                                 red_name=kwargs['red_team_name'],
                                 blue_name=kwargs['blue_team_name'],
+                                time_taken=total_time,
                                 match_id=match_id)
     teams_stats = {
         kwargs['red_team_name']: compute_team_stats(games_data=games_data, team_name=kwargs['red_team_name']),
@@ -1197,11 +1196,12 @@ def run(args):
     print(options, file=sys.stdout)
 
     games = run_games(**options)
+    total_time = round(time.time() - start_time, 0)
 
     if games:
         # save_score(games=games, contest_name=options['contest_name'], match_id=options['match_id'])
-        save_score(games=games, **options)
-    print(f'\nTotal Time Game: {round(time.time() - start_time, 0)}', file=sys.stdout)
+        save_score(games=games, total_time=total_time, **options)
+    print(f'\nTotal Time Game: {total_time}', file=sys.stdout)
 
 
 def main():
