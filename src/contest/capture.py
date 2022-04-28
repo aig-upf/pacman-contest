@@ -1180,7 +1180,7 @@ def save_score(games, total_time, *, contest_name, match_id, **kwargs):
     import json
     with open(f'{sub_folder}/match_{match_id}.json', 'w') as f:
         # print(games.state.data.score, file=f)
-        f.write(json.dumps(match_data))
+        f.write(json.dumps(match_data, sort_keys=True, indent=4))
 
 
 def run(args):
