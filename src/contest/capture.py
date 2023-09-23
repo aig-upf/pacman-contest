@@ -61,6 +61,7 @@ import contest.keyboardAgents as keyboardAgents
 from contest.game import Actions
 from contest.game import GameStateData, Game, Grid, Configuration
 from contest.util import nearestPoint, manhattanDistance
+from contest.captureGraphicsDisplay import *
 
 #DIR_SCRIPT = sys.path[0] + "/src/contest/"
 import contest
@@ -1018,7 +1019,7 @@ def load_agents(is_red, agent_file, cmd_line_args):
     return create_team_func(indices[0], indices[1], is_red, **args)
 
 
-def replay_game(layout, agents, actions, display, length, red_team_name, blue_team_name, wait_end=True, delay=1):
+def replay_game(layout, agents, actions, display, length, red_team_name, blue_team_name, replay_filename,wait_end=True, delay=1):
     rules = CaptureRules()
     game = rules.new_game(layout, agents, display, length, False, False)
     state = game.state
@@ -1033,6 +1034,9 @@ def replay_game(layout, agents, actions, display, length, red_team_name, blue_te
         display.update(state.data)
         # Allow for game specific conditions (winning, losing, etc.)
         rules.process(state, game)
+        base_name = os.path.basename(replay_filename).replace(".replay", "")
+        saveFrame(base_name)
+
         time.sleep(delay)
 
     game.game_over = True
@@ -1066,9 +1070,19 @@ def replay_game(layout, agents, actions, display, length, red_team_name, blue_te
             input("PRESS ENTER TO CONTINUE")
         except:
             print("END")
+    
+    if SAVE_POSTSCRIPT:
+        # Convert all PostScript files to PNG
+        convert_all_ps_to_png(base_name)
+        # Create videos
+        output_file = os.path.join(PNG_DIR, f'{os.path.basename(replay_filename).replace(".replay", ".mp4")}')
+        create_video_from_pngs(base_name)
+
+        #clear files
+        clear_directory(PS_DIR)
+        clear_directory(PNG_DIR)
 
     display.finish()
-
 
 def run_games(layouts, agents, display, length, num_games, record, num_training, red_team_name, blue_team_name,
               contest_name="default", mute_agents=False, catch_exceptions=False, delay_step=0, match_id=0):
