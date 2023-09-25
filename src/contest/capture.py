@@ -1074,7 +1074,6 @@ def replay_game(layout, agents, actions, display, length, red_team_name, blue_te
         # Convert all PostScript files to PNG
         convert_all_ps_to_png(base_name)
         # Create videos
-        output_file = os.path.join(PNG_DIR, f'{os.path.basename(replay_filename).replace(".replay", ".mp4")}')
         create_video_from_pngs(base_name)
 
         #clear files
