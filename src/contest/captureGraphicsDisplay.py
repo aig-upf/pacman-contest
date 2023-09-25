@@ -802,17 +802,80 @@ def add(x, y):
 # convert -delay 7 -loop 1 -compress lzw -layers optimize frame* out.gif
 # convert is part of imagemagick (freeware)
 
-SAVE_POSTSCRIPT = False
-POSTSCRIPT_OUTPUT_DIR = 'frames'
+SAVE_POSTSCRIPT = True
+PS_DIR = './frames'
+PNG_DIR = './frames_png'
 FRAME_NUMBER = 0
 import os
+import subprocess
+import shutil
+
+def convert_ps_to_png(ps_file, png_file):
+    try:
+        cmd = ["convert", ps_file, png_file]
+        subprocess.run(cmd, check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"Error converting {ps_file} to {png_file}: {e}")
+
+def convert_all_ps_to_png(base_name):
+    for i in range(FRAME_NUMBER):
+        ps_name = os.path.join(PS_DIR, f'{base_name}_frame_%08d.ps' % i)
+        png_name = os.path.join(PNG_DIR, f'{base_name}_frame_%08d.png' % i)
+        convert_ps_to_png(ps_name, png_name)
 
 
-def saveFrame():
-    "Saves the current graphical output as a postscript file"
-    global SAVE_POSTSCRIPT, FRAME_NUMBER, POSTSCRIPT_OUTPUT_DIR
-    if not SAVE_POSTSCRIPT: return
-    if not os.path.exists(POSTSCRIPT_OUTPUT_DIR): os.mkdir(POSTSCRIPT_OUTPUT_DIR)
-    name = os.path.join(POSTSCRIPT_OUTPUT_DIR, 'frame_%08d.ps' % FRAME_NUMBER)
+def convert_pngs_to_mp4(base_name):
+    """
+    Convert PNG images in PNG_DIR with the given base_name to an MP4 video.
+    """
+    output_file = os.path.join('./contest_video', f'{base_name}.mp4')
+    os.makedirs('./contest_video', exist_ok=True)
+
+    try:
+        cmd = [
+            'ffmpeg', 
+            '-framerate', '30',
+            '-i', os.path.join(PNG_DIR, f'{base_name}_frame_%08d.png'),
+            '-vf', 'pad=ceil(iw/2)*2:ceil(ih/2)*2',
+            '-c:v', 'libx264',
+            '-pix_fmt', 'yuv420p',
+            output_file
+        ]
+        subprocess.run(cmd, check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"Error creating MP4 for {base_name}: {e}")
+
+
+
+def create_video_from_pngs(base_name, output_file):
+    convert_pngs_to_mp4(base_name, output_file)
+
+def clear_directory(directory):
+    """
+    Clear all files and subdirectories in the given directory.
+    """
+    for filename in os.listdir(directory):
+        file_path = os.path.join(directory, filename)
+        try:
+            if os.path.isfile(file_path) or os.path.islink(file_path):
+                os.unlink(file_path)
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+        except Exception as e:
+            print(f'Failed to delete {file_path}. Reason: {e}')
+
+
+def saveFrame(base_name):
+    global SAVE_POSTSCRIPT, FRAME_NUMBER, PS_DIR
+    
+    if not SAVE_POSTSCRIPT: 
+        return FRAME_NUMBER
+    
+    if not os.path.exists(PS_DIR): 
+        os.mkdir(PS_DIR)
+    
+    ps_name = os.path.join(PS_DIR, f'{base_name}_frame_%08d.ps' % FRAME_NUMBER)
     FRAME_NUMBER += 1
-    writePostscript(name)  # writes the current canvas
+    writePostscript(ps_name)  # 假设这个函数是用来保存 PostScript 文件的
+    
+    return FRAME_NUMBER
