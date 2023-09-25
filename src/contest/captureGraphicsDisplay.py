@@ -876,6 +876,6 @@ def saveFrame(base_name):
     
     ps_name = os.path.join(PS_DIR, f'{base_name}_frame_%08d.ps' % FRAME_NUMBER)
     FRAME_NUMBER += 1
-    writePostscript(ps_name)  # 假设这个函数是用来保存 PostScript 文件的
+    writePostscript(ps_name) 
     
     return FRAME_NUMBER
