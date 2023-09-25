@@ -866,6 +866,7 @@ def read_command(argv):
         recorded['red_team_name'] = parsed_options.red
         recorded['blue_team_name'] = parsed_options.blue
         recorded['wait_end'] = False
+        recorded['replay_filename'] = parsed_options.replay
         replay_game(**recorded)
         sys.exit(0)
 
@@ -879,7 +880,7 @@ def read_command(argv):
         recorded['red_team_name'] = parsed_options.red
         recorded['blue_team_name'] = parsed_options.blue
         recorded['wait_end'] = False
-
+        recorded['replay_filename'] = parsed_options.replay
         replay_game(**recorded)
         sys.exit(0)
 
