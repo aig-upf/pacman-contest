@@ -11,7 +11,6 @@
 # Student side autograding was added by Brad Miller, Nick Hay, and
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
 
-
 # capture.py
 # ----------
 # Licensing Information: Please do not distribute or publish solutions to this
