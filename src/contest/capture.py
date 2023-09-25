@@ -1019,6 +1019,8 @@ def load_agents(is_red, agent_file, cmd_line_args):
 
 
 def replay_game(layout, agents, actions, display, length, red_team_name, blue_team_name, replay_filename,wait_end=True, delay=1):
+    clear_directory(PS_DIR)
+    clear_directory(PNG_DIR)
     rules = CaptureRules()
     game = rules.new_game(layout, agents, display, length, False, False)
     state = game.state

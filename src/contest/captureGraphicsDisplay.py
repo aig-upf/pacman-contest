@@ -847,8 +847,8 @@ def convert_pngs_to_mp4(base_name):
 
 
 
-def create_video_from_pngs(base_name, output_file):
-    convert_pngs_to_mp4(base_name, output_file)
+def create_video_from_pngs(base_name):
+    convert_pngs_to_mp4(base_name)
 
 def clear_directory(directory):
     """
