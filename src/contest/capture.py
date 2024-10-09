@@ -57,12 +57,12 @@ import sys
 import time
 import traceback
 
-import contest.keyboard_agents as keyboardAgents
+import contest.keyboard_agents as keyboard_agents
 from contest.game import Actions
 from contest.game import GameStateData, Game, Grid, Configuration
-from contest.util import nearestPoint, manhattanDistance
+from contest.util import nearest_point, manhattan_distance
 
-#DIR_SCRIPT = sys.path[0] + "/src/contest/"
+# DIR_SCRIPT = sys.path[0] + "/src/contest/"
 import contest
 
 DIR_SCRIPT = '/'.join(contest.__file__.split('/')[:-1])
@@ -81,7 +81,7 @@ SCARED_TIME = 40
 
 
 def compute_noisy_distance(pos1, pos2):
-    return int(manhattanDistance(pos1, pos2) + random.choice(SONAR_NOISE_VALUES))
+    return int(manhattan_distance(pos1, pos2) + random.choice(SONAR_NOISE_VALUES))
 
 
 ###################################################
@@ -195,7 +195,7 @@ class GameState:
         return self.blue_team[:]
 
     def is_on_red_team(self, agent_index):
-        """Returns true if the agent with the given agentIndex is on the red team."""
+        """Returns true if the agent with the given agent_index is on the red team."""
         return self.teams[agent_index]
 
     def get_agent_distances(self):
@@ -215,7 +215,7 @@ class GameState:
 
     def get_initial_agent_position(self, agent_index):
         """Returns the initial position of an agent."""
-        return self.data.layout.agentPositions[agent_index][1]
+        return self.data.layout.agent_positions[agent_index][1]
 
     def get_capsules(self):
         """Returns a list of positions (x,y) of the remaining capsules."""
@@ -272,7 +272,7 @@ class GameState:
             seen = False
             enemy_pos = state.get_agent_position(enemy)
             for teammate in team:
-                if manhattanDistance(enemy_pos, state.get_agent_position(teammate)) <= SIGHT_RANGE:
+                if manhattan_distance(enemy_pos, state.get_agent_position(teammate)) <= SIGHT_RANGE:
                     seen = True
             if not seen: state.data.agent_states[enemy].configuration = None
         return state
@@ -303,7 +303,7 @@ class GameState:
 
     def is_red(self, config_or_pos):
         width = self.data.layout.width
-        if type(config_or_pos) == type((0, 0)):
+        if config_or_pos is (0, 0):
             return config_or_pos[0] < width // 2
         else:
             return config_or_pos.pos[0] < width // 2
@@ -407,7 +407,7 @@ class CaptureRules:
     def get_progress(self, game):
         blue = 1.0 - (game.state.get_blue_food().count() / float(self._init_blue_food))
         red = 1.0 - (game.state.get_red_food().count() / float(self._init_red_food))
-        moves = len(self.move_history) / float(game.length)
+        moves = len(self.move_history) / float(game.length)  # FIXME: self.move never assigned
 
         # return the most likely progress indicator, clamped to [0, 1]
         return min(max(0.75 * max(red, blue) + 0.25 * moves, 0.0), 1.0)
@@ -478,7 +478,7 @@ class AgentRules:
 
         # Eat
         current_position = agent_state.configuration.get_position()
-        nearest = nearestPoint(current_position)
+        nearest = nearest_point(current_position)
 
         if current_position == nearest:
             is_red = state.is_on_red_team(agent_index)
@@ -504,7 +504,7 @@ class AgentRules:
                 if red_count >= (TOTAL_FOOD / 2) - MIN_FOOD or blue_count >= (TOTAL_FOOD / 2) - MIN_FOOD:
                     state.data._win = True
 
-        if agent_state.is_pacman and manhattanDistance(nearest, current_position) <= 0.9:
+        if agent_state.is_pacman and manhattan_distance(nearest, current_position) <= 0.9:
             AgentRules.consume(nearest, state, state.is_on_red_team(agent_index))
 
     @staticmethod
@@ -558,7 +558,7 @@ class AgentRules:
     def decrement_timer(state):
         timer = state.scared_timer
         if timer == 1:
-            state.configuration.pos = nearestPoint(state.configuration.pos)
+            state.configuration.pos = nearest_point(state.configuration.pos)
         state.scared_timer = max(0, timer - 1)
 
     @staticmethod
@@ -570,7 +570,7 @@ class AgentRules:
         if not agent_state.is_pacman:
             raise Exception('something is seriously wrong, this agent isn\'t a pacman!')
 
-        # ok so agentState is this:
+        # ok so agent_state is this:
         if agent_state.num_carrying == 0:
             return
 
@@ -585,7 +585,7 @@ class AgentRules:
         # on the blue side
         # score_direction = (-1) ** (int(is_red) + 1)
 
-        # state.data.scoreChange += scoreDirection * agentState.numCarrying
+        # state.data.scoreChange += scoreDirection * agent_state.numCarrying
 
         def on_right_side(from_state, from_x, from_y):
             new_dummy_config = Configuration((from_x, from_y), 'North')
@@ -661,7 +661,7 @@ class AgentRules:
             state.data._food_added = food_added
         else:
             state.data._food_added.extend(food_added)
-        # now our agentState is no longer carrying food
+        # now our agent_state is no longer carrying food
         agent_state.num_carrying = 0
         pass
 
@@ -678,7 +678,7 @@ class AgentRules:
                 if other_agent_state.is_pacman: continue
                 ghost_position = other_agent_state.get_position()
                 if ghost_position is None: continue
-                if manhattanDistance(ghost_position, agent_state.get_position()) <= COLLISION_TOLERANCE:
+                if manhattan_distance(ghost_position, agent_state.get_position()) <= COLLISION_TOLERANCE:
                     # award points to the other team for killing Pacmen
                     if other_agent_state.scared_timer <= 0:
                         AgentRules.dump_food_from_death(state, agent_state)
@@ -704,7 +704,7 @@ class AgentRules:
                 if not other_agent_state.is_pacman: continue
                 pac_pos = other_agent_state.get_position()
                 if pac_pos is None: continue
-                if manhattanDistance(pac_pos, agent_state.get_position()) <= COLLISION_TOLERANCE:
+                if manhattan_distance(pac_pos, agent_state.get_position()) <= COLLISION_TOLERANCE:
                     # award points to the other team for killing Pacmen
                     if agent_state.scared_timer <= 0:
                         AgentRules.dump_food_from_death(state, other_agent_state)
@@ -920,9 +920,9 @@ def read_command(argv):
             [parsed_options.keys0, parsed_options.keys1, parsed_options.keys2, parsed_options.keys3]):
         if not val: continue
         if num_keyboard_agents == 0:
-            agent = keyboardAgents.KeyboardAgent(index)
+            agent = keyboard_agents.KeyboardAgent(index)
         elif num_keyboard_agents == 1:
-            agent = keyboardAgents.KeyboardAgent2(index)
+            agent = keyboard_agents.KeyboardAgent2(index)
         else:
             raise Exception('Max of two keyboard agents supported')
         num_keyboard_agents += 1
@@ -964,8 +964,8 @@ def random_layout(seed=None):
         seed = random.randint(0, 99999999)
     # layout = 'layouts/random%08dCapture.lay' % seed
     # print 'Generating random layout in %s' % layout
-    import contest.maze_generator as mazeGenerator
-    return f'RANDOM{seed}', mazeGenerator.generateMaze(seed)
+    import contest.maze_generator as maze_generator
+    return f'RANDOM{seed}', maze_generator.generateMaze(seed)
 
 
 def load_agents(is_red, agent_file, cmd_line_args):
@@ -1084,8 +1084,8 @@ def run_games(layouts, agents, display, length, num_games, record, num_training,
         layout = layouts[i]
         if be_quiet:
             # Suppress output and graphics
-            import contest.text_display as textDisplay
-            game_display = textDisplay.NullGraphics()
+            import contest.text_display as text_display
+            game_display = text_display.NullGraphics()
             rules.quiet = True
         else:
             game_display = display

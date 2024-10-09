@@ -224,7 +224,7 @@ class PacmanGraphics:
         refresh()
 
     def draw_agent_objects(self, state):
-        self.agent_images = []  # (agentState, image)
+        self.agent_images = []  # (agent_state, image)
         for index, agent in enumerate(state.agent_states):
             if agent.is_pacman:
                 agent_image = self.draw_pacman(agent, index)

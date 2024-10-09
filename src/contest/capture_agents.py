@@ -17,10 +17,10 @@
 """
 import random
 
-import contest.distance_calculator as distanceCalculator
+import contest.distance_calculator as distance_calculator
 import contest.util as util
 from contest.game import Agent
-from contest.util import nearestPoint
+from contest.util import nearest_point
 
 
 # Note: the following class is not used, but is kept for backwards
@@ -35,7 +35,7 @@ class AgentFactory:
 
     def get_agent(self, index):
         """Returns the agent for the provided index."""
-        util.raiseNotDefined()
+        util.raise_not_defined()
 
 
 class RandomAgent(Agent):
@@ -94,7 +94,7 @@ class CaptureAgent(Agent):
         self.distancer = None
 
         # A history of observations
-        self.observationHistory = []
+        self.observation_history = []
 
         # Time to spend each turn on computing maze distances
         self.timeForComputing = time_for_computing
@@ -114,17 +114,17 @@ class CaptureAgent(Agent):
         """
         self.red = game_state.is_on_red_team(self.index)
         self.register_team(self.get_team(game_state))
-        self.distancer = distanceCalculator.Distancer(game_state.data.layout)
+        self.distancer = distance_calculator.Distancer(game_state.data.layout)
 
         # comment this out to forgo maze distance computation and use manhattan distances
-        self.distancer.getMazeDistances()
+        self.distancer.get_maze_distances()
 
         import __main__
         if '_display' in dir(__main__):
             self.display = __main__._display
 
     def final(self, game_state):
-        self.observationHistory = []
+        self.observation_history = []
 
     def register_team(self, agents_on_team):
         """
@@ -142,15 +142,15 @@ class CaptureAgent(Agent):
         if self.display:
             from capture_graphics_display import PacmanGraphics
             if isinstance(self.display, PacmanGraphics):
-                if not type(cells) is list:
+                if not (cells is list):
                     cells = [cells]
-                self.display.debugDraw(cells, color, clear)
+                self.display.debug_draw(cells, color, clear)
 
     def debug_clear(self):
         if self.display:
             from capture_graphics_display import PacmanGraphics
             if isinstance(self.display, PacmanGraphics):
-                self.display.clearDebug()
+                self.display.clear_debug()
 
     #################
     # Action Choice #
@@ -164,11 +164,11 @@ class CaptureAgent(Agent):
         (so you have a record of the game states of the game) and will call your
         choose action method if you're in a state.
         """
-        self.observationHistory.append(game_state)
+        self.observation_history.append(game_state)
 
         my_state = game_state.get_agent_state(self.index)
         my_pos = my_state.get_position()
-        if my_pos != nearestPoint(my_pos):
+        if my_pos != nearest_point(my_pos):
             # We're halfway from one position to the next
             return game_state.get_legal_actions(self.index)[0]
         else:
@@ -179,7 +179,7 @@ class CaptureAgent(Agent):
         Override this method to make a good agent. It should return a legal action within
         the time limit (otherwise a random legal action will be chosen for you).
         """
-        util.raiseNotDefined()
+        util.raise_not_defined()
 
     #######################
     # Convenience Methods #
@@ -254,10 +254,10 @@ class CaptureAgent(Agent):
         Returns the distance between two points; These are calculated using the provided
         distancer object.
 
-        If distancer.getMazeDistances() has been called, then maze distances are available.
+        If distancer.get_maze_distances() has been called, then maze distances are available.
         Otherwise, this just returns Manhattan distance.
         """
-        d = self.distancer.getDistance(pos1, pos2)
+        d = self.distancer.get_distance(pos1, pos2)
         return d
 
     def get_previous_observation(self):
@@ -266,10 +266,10 @@ class CaptureAgent(Agent):
         (the observed state of the game last time this agent moved - this may not include
         all of your opponent's agent locations exactly).
         """
-        if len(self.observationHistory) == 1:
+        if len(self.observation_history) == 1:
             return None
         else:
-            return self.observationHistory[-2]
+            return self.observation_history[-2]
 
     def get_current_observation(self):
         """
@@ -277,7 +277,7 @@ class CaptureAgent(Agent):
         (the observed state of the game - this may not include
         all of your opponent's agent locations exactly).
         """
-        return self.observationHistory[-1]
+        return self.observation_history[-1]
 
     def display_distributions_over_positions(self, distributions):
         """

@@ -16,7 +16,7 @@ from contest.game import Agent
 from contest.game import Actions
 from contest.game import Directions
 import random
-from contest.util import manhattanDistance
+from contest.util import manhattan_distance
 import contest.util
 
 class GhostAgent( Agent ):
@@ -28,11 +28,11 @@ class GhostAgent( Agent ):
         if len(dist) == 0:
             return Directions.STOP
         else:
-            return util.chooseFromDistribution( dist )
+            return util.choose_from_distribution(dist)
 
     def getDistribution(self, state):
         "Returns a Counter encoding a distribution over actions from the provided state."
-        util.raiseNotDefined()
+        util.raise_not_defined()
 
 class RandomGhost( GhostAgent ):
     "A ghost that chooses a legal action uniformly at random."
@@ -64,7 +64,7 @@ class DirectionalGhost( GhostAgent ):
         pacmanPosition = state.getPacmanPosition()
 
         # Select best actions given the state
-        distancesToPacman = [manhattanDistance( pos, pacmanPosition ) for pos in newPositions]
+        distancesToPacman = [manhattan_distance(pos, pacmanPosition) for pos in newPositions]
         if isScared:
             bestScore = max( distancesToPacman )
             bestProb = self.prob_scaredFlee

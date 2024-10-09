@@ -51,7 +51,7 @@ class Agent:
         The Agent will receive a GameState (from either {pacman, capture, sonar}.py) and
         must return an action from Directions.{North, South, East, West, Stop}
         """
-        raiseNotDefined()
+        raise_not_defined()
 
 
 class Directions:
@@ -460,7 +460,7 @@ class GameStateData:
         for agent_state in self.agent_states:
             if agent_state is None: continue
             if agent_state.configuration is None: continue
-            x, y = [int(i) for i in nearestPoint(agent_state.configuration.pos)]
+            x, y = [int(i) for i in nearest_point(agent_state.configuration.pos)]
             agent_dir = agent_state.configuration.direction
             if agent_state.is_pacman:
                 grid[x][y] = self._pac_str(agent_dir)
@@ -520,7 +520,7 @@ class GameStateData:
 
         self.agent_states = []
         num_ghosts = 0
-        for is_pacman, pos in layout.agentPositions:
+        for is_pacman, pos in layout.agent_positions:
             if not is_pacman:
                 if num_ghosts == num_ghost_agents:
                     continue  # Max ghosts reached already
