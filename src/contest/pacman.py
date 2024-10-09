@@ -558,14 +558,14 @@ def readCommand( argv ):
 
     # Choose a display format
     if options.quietGraphics:
-        import contest.textDisplay as textDisplay
+        import contest.text_display as textDisplay
         args['display'] = textDisplay.NullGraphics()
     elif options.textGraphics:
-        import contest.textDisplay as textDisplay
+        import contest.text_display as textDisplay
         textDisplay.SLEEP_TIME = options.frame_time
         args['display'] = textDisplay.PacmanGraphics()
     else:
-        import contest.graphicsDisplay as graphicsDisplay
+        import contest.graphics_display as graphicsDisplay
         args['display'] = graphicsDisplay.PacmanGraphics(options.zoom, frame_time= options.frame_time)
     args['numGames'] = options.numGames
     args['record'] = options.record
@@ -603,14 +603,14 @@ def loadAgent(pacman, nographics):
             except ImportError:
                 continue
             if pacman in dir(module):
-                if nographics and modulename == 'keyboardAgents.py':
+                if nographics and modulename == 'keyboard_agents.py':
                     raise Exception('Using the keyboard requires graphics (not text display)')
                 return getattr(module, pacman)
     raise Exception('The agent ' + pacman + ' is not specified in any *Agents.py.')
 
 def replayGame( layout, actions, display ):
-    import contest.pacmanAgents as pacmanAgents
-    import contest.ghostAgents as ghostAgents
+    import contest.pacman_agents as pacmanAgents
+    import contest.ghost_agents as ghostAgents
     rules = ClassicGameRules()
     agents = [pacmanAgents.GreedyAgent()] + [ghostAgents.RandomGhost(i+1) for i in range(layout.get_num_ghosts())]
     game = rules.newGame( layout, agents[0], agents[1:], display )
@@ -638,7 +638,7 @@ def runGames( layout, pacman, ghosts, display, numGames, record, numTraining = 0
         beQuiet = i < numTraining
         if beQuiet:
                 # Suppress output and graphics
-            import contest.textDisplay as textDisplay
+            import contest.text_display as textDisplay
             gameDisplay = textDisplay.NullGraphics()
             rules.quiet = True
         else:

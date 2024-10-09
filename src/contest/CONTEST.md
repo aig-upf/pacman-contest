@@ -47,7 +47,7 @@ There are many files in this package, most of them implementing the game itself.
 
 * `capture.py`: The main file that runs games locally. This file also describes the new capture the flag GameState type and rules.
 * `captureAgents.py`: Specification and helper methods for capture agents.
-* `baselineTeam.py`: Example code that defines two very basic reflex agents, to help you get started.
+* `baseline_team.py`: Example code that defines two very basic reflex agents, to help you get started.
 * `myTeam.py`: This is where you define your own solution agents (and the only thing used go run the contest).
 
 ### Supporting files (do not modify):
@@ -102,7 +102,7 @@ If you agent times out or otherwise throws an exception, an error message will b
 
 ## Getting Started
 
-By default, you can run a game with the simple `baselineTeam` that the staff has provided:
+By default, you can run a game with the simple `baseline_team` that the staff has provided:
 
 ```bash
 $ python3 capture.py
@@ -117,13 +117,13 @@ $ python3 capture.py --help
 ```
 
 There are four slots for agents, where agents 0 and 2 are always on the red team, and 1 and 3 are on the blue team. Agents are created by agent factories (one for Red, one for Blue). See the section on designing
-agents for a description of the agents invoked above. The only team that we provide is the `baselineTeam`. It is chosen by default as both the red and blue team, but as an example of how to choose teams:
+agents for a description of the agents invoked above. The only team that we provide is the `baseline_team`. It is chosen by default as both the red and blue team, but as an example of how to choose teams:
 
 ```python
-$ python3 capture.py -r baselineTeam -b baselineTeam
+$ python3 capture.py -r baseline_team -b baseline_team
 ```
 
-which specifies that the red team `-r` and the blue team `-b` are both created from `baselineTeam.py`.
+which specifies that the red team `-r` and the blue team `-b` are both created from `baseline_team.py`.
 
 To specify agents elsewhere:
 
@@ -149,7 +149,7 @@ Unlike project 2, an agent now has the more complex job of trading off offense v
 
 ### Baseline Team:
 
-To kick-start your agent design, we have provided you with a team of two baseline agents, defined in `baselineTeam.py`. They are both quite bad. The `OffensiveReflexAgent` moves toward the closest food on the opposing side. The `DefensiveReflexAgent` wanders around on its own side and tries to chase down invaders it happens to see.
+To kick-start your agent design, we have provided you with a team of two baseline agents, defined in `baseline_team.py`. They are both quite bad. The `OffensiveReflexAgent` moves toward the closest food on the opposing side. The `DefensiveReflexAgent` wanders around on its own side and tries to chase down invaders it happens to see.
 
 ### Interface:
 

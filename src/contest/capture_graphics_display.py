@@ -1,4 +1,4 @@
-# captureGraphicsDisplay.py
+# capture_graphics_display.py
 # -------------------------
 # Licensing Information:  You are free to use or extend these projects for
 # educational purposes provided that (1) you do not distribute or publish
@@ -12,7 +12,7 @@
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
 
 
-from contest.graphicsUtils import *
+from contest.graphics_utils import *
 import math, time
 from contest.game import Directions
 

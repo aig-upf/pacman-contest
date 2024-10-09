@@ -1,4 +1,4 @@
-# keyboardAgents.py
+# keyboard_agents.py
 # -----------------
 # Licensing Information:  You are free to use or extend these projects for
 # educational purposes provided that (1) you do not distribute or publish
@@ -34,8 +34,8 @@ class KeyboardAgent(Agent):
         self.keys = []
 
     def get_action(self, state):
-        from graphicsUtils import keys_waiting
-        from graphicsUtils import keys_pressed
+        from graphics_utils import keys_waiting
+        from graphics_utils import keys_pressed
         keys = list(keys_waiting()) + list(keys_pressed())
         if keys != []:
             self.keys = keys

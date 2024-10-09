@@ -48,7 +48,7 @@ def create_team(first_index, second_index, is_red,
 class DummyAgent(CaptureAgent):
     """
   A Dummy agent to serve as an example of the necessary agent structure.
-  You should look at baselineTeam.py for more details about how to
+  You should look at baseline_team.py for more details about how to
   create an agent as this is the bare minimum.
   """
 
@@ -69,7 +69,7 @@ class DummyAgent(CaptureAgent):
         Make sure you do not delete the following line. If you would like to
         use Manhattan distances instead of maze distances in order to save
         on initialization time, please take a look at
-        CaptureAgent.register_initial_state in captureAgents.py.
+        CaptureAgent.register_initial_state in capture_agents.py.
         '''
         CaptureAgent.register_initial_state(self, game_state)
 

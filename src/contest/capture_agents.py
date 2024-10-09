@@ -1,4 +1,4 @@
-# captureAgents.py
+# capture_agents.py
 # ----------------
 # Licensing Information:  You are free to use or extend these projects for
 # educational purposes provided that (1) you do not distribute or publish
@@ -17,7 +17,7 @@
 """
 import random
 
-import contest.distanceCalculator as distanceCalculator
+import contest.distance_calculator as distanceCalculator
 import contest.util as util
 from contest.game import Agent
 from contest.util import nearestPoint
@@ -140,7 +140,7 @@ class CaptureAgent(Agent):
     def debug_draw(self, cells, color, clear=False):
 
         if self.display:
-            from captureGraphicsDisplay import PacmanGraphics
+            from capture_graphics_display import PacmanGraphics
             if isinstance(self.display, PacmanGraphics):
                 if not type(cells) is list:
                     cells = [cells]
@@ -148,7 +148,7 @@ class CaptureAgent(Agent):
 
     def debug_clear(self):
         if self.display:
-            from captureGraphicsDisplay import PacmanGraphics
+            from capture_graphics_display import PacmanGraphics
             if isinstance(self.display, PacmanGraphics):
                 self.display.clearDebug()
 

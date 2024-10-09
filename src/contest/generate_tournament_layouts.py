@@ -1,4 +1,4 @@
-# generateTournamentLayouts.py
+# generate_tournament_layouts.py
 # ----------------------------
 # Licensing Information:  You are free to use or extend these projects for
 # educational purposes provided that (1) you do not distribute or publish
@@ -14,7 +14,7 @@
 
 import sys, random
 
-import contest.mazeGenerator
+import contest.maze_generator
 
 """
 This is a helper file which generates the random seeds for the map

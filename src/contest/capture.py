@@ -57,13 +57,14 @@ import sys
 import time
 import traceback
 
-import contest.keyboardAgents as keyboardAgents
+import contest.keyboard_agents as keyboardAgents
 from contest.game import Actions
 from contest.game import GameStateData, Game, Grid, Configuration
 from contest.util import nearestPoint, manhattanDistance
 
 #DIR_SCRIPT = sys.path[0] + "/src/contest/"
 import contest
+
 DIR_SCRIPT = '/'.join(contest.__file__.split('/')[:-1])
 
 # If you change these, you won't affect the server, so you can't cheat
@@ -761,13 +762,13 @@ def read_command(argv):
                 (2) python capture.py --keys0
                     - starts a two-player interactive game where the arrow keys control agent 0, and all other agents 
                     are baseline agents
-                (3) python capture.py -r baselineTeam -b myTeam
+                (3) python capture.py -r baseline_team -b myTeam
                     - starts a fully automated game where the red team is a baseline team and blue team is myTeam
     """
     parser = OptionParser(usage_str)
 
-    parser.add_option('-r', '--red', help=default('Red team'), default=os.path.join(DIR_SCRIPT, 'baselineTeam')),
-    parser.add_option('-b', '--blue', help=default('Blue team'), default=os.path.join(DIR_SCRIPT, 'baselineTeam')),
+    parser.add_option('-r', '--red', help=default('Red team'), default=os.path.join(DIR_SCRIPT, 'baseline_team')),
+    parser.add_option('-b', '--blue', help=default('Blue team'), default=os.path.join(DIR_SCRIPT, 'baseline_team')),
     parser.add_option('--red-name', dest="red_name", help=default('Red team name'), default='Red')
     parser.add_option('--blue-name', dest="blue_name", help=default('Blue team name'), default='Blue')
     parser.add_option('--redOpts', dest="red_opts", help=default('Options for red team (e.g. first=keys)'), default='')
@@ -833,23 +834,23 @@ def read_command(argv):
     #   import pygameDisplay
     #    args['display'] = pygameDisplay.PacmanGraphics()
     if parsed_options.textgraphics:
-        import contest.textDisplay as textDisplay
-        args['display'] = textDisplay.PacmanGraphics()
+        import contest.text_display as text_display
+        args['display'] = text_display.PacmanGraphics()
     elif parsed_options.quiet or parsed_options.replayq:
-        import contest.textDisplay as textDisplay
-        args['display'] = textDisplay.NullGraphics()
+        import contest.text_display as text_display
+        args['display'] = text_display.NullGraphics()
     elif parsed_options.super_quiet:
-        import contest.textDisplay as textDisplay
-        args['display'] = textDisplay.NullGraphics()
+        import contest.text_display as text_display
+        args['display'] = text_display.NullGraphics()
         args['mute_agents'] = True
     else:
-        import contest.captureGraphicsDisplay as captureGraphicsDisplay
+        import contest.capture_graphics_display as capture_graphics_display
         # Hack for agents writing to the display
-        captureGraphicsDisplay.FRAME_TIME = 0
-        args['display'] = captureGraphicsDisplay.PacmanGraphics(parsed_options.red, parsed_options.red_name,
-                                                                parsed_options.blue,
-                                                                parsed_options.blue_name, parsed_options.zoom, 0,
-                                                                capture=True)
+        capture_graphics_display.FRAME_TIME = 0
+        args['display'] = capture_graphics_display.PacmanGraphics(parsed_options.red, parsed_options.red_name,
+                                                                  parsed_options.blue,
+                                                                  parsed_options.blue_name, parsed_options.zoom, 0,
+                                                                  capture=True)
         import __main__
         __main__.__dict__['_display'] = args['display']
 
@@ -963,7 +964,7 @@ def random_layout(seed=None):
         seed = random.randint(0, 99999999)
     # layout = 'layouts/random%08dCapture.lay' % seed
     # print 'Generating random layout in %s' % layout
-    import contest.mazeGenerator as mazeGenerator
+    import contest.maze_generator as mazeGenerator
     return f'RANDOM{seed}', mazeGenerator.generateMaze(seed)
 
 
@@ -1083,7 +1084,7 @@ def run_games(layouts, agents, display, length, num_games, record, num_training,
         layout = layouts[i]
         if be_quiet:
             # Suppress output and graphics
-            import contest.textDisplay as textDisplay
+            import contest.text_display as textDisplay
             game_display = textDisplay.NullGraphics()
             rules.quiet = True
         else:
