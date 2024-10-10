@@ -36,8 +36,8 @@ class Layout:
         self.agent_positions = []
         self.num_ghosts = 0
         self.process_layout_text(layout_text)
-        self.layoutText = layout_text
-        self.totalFood = len(self.food.as_list())
+        self.layout_text = layout_text
+        self.total_food = len(self.food.as_list())
         # self.initializeVisibilityMatrix()
 
     def get_num_ghosts(self):
@@ -45,7 +45,7 @@ class Layout:
 
     def initialize_visibility_matrix(self):
         global VISIBILITY_MATRIX_CACHE
-        if reduce(str.__add__, self.layoutText) not in VISIBILITY_MATRIX_CACHE:
+        if reduce(str.__add__, self.layout_text) not in VISIBILITY_MATRIX_CACHE:
             from contest.game import Directions
             vecs = [(-0.5, 0), (0.5, 0), (0, -0.5), (0, 0.5)]
             dirs = [Directions.NORTH, Directions.SOUTH, Directions.WEST, Directions.EAST]
@@ -57,14 +57,15 @@ class Layout:
                     if not self.walls[x][y]:
                         for vec, direction in zip(vecs, dirs):
                             dx, dy = vec
-                            nextx, nexty = x + dx, y + dy
-                            while (nextx + nexty) != int(nextx) + int(nexty) or not self.walls[int(nextx)][int(nexty)]:
-                                vis[x][y][direction].add((nextx, nexty))
-                                nextx, nexty = x + dx, y + dy
+                            next_x, next_y = x + dx, y + dy
+                            while (((next_x + next_y) != int(next_x) + int(next_y)) or
+                                   not self.walls[int(next_x)][int(next_y)]):
+                                vis[x][y][direction].add((next_x, next_y))
+                                next_x, next_y = x + dx, y + dy
             self.visibility = vis
-            VISIBILITY_MATRIX_CACHE[reduce(str.__add__, self.layoutText)] = vis
+            VISIBILITY_MATRIX_CACHE[reduce(str.__add__, self.layout_text)] = vis
         else:
-            self.visibility = VISIBILITY_MATRIX_CACHE[reduce(str.__add__, self.layoutText)]
+            self.visibility = VISIBILITY_MATRIX_CACHE[reduce(str.__add__, self.layout_text)]
 
     def is_wall(self, pos):
         x, col = pos
@@ -92,10 +93,10 @@ class Layout:
         return ghost_pos in self.visibility[row][col][pac_direction]
 
     def __str__(self):
-        return "\n".join(self.layoutText)
+        return "\n".join(self.layout_text)
 
     def deep_copy(self):
-        return Layout(layout_name=self.layout_name, layout_text=self.layoutText[:])
+        return Layout(layout_name=self.layout_name, layout_text=self.layout_text[:])
 
     def process_layout_text(self, layout_text):
         """

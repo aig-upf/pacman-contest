@@ -460,7 +460,7 @@ def raise_not_defined():
     line = inspect.stack()[1][2]
     method = inspect.stack()[1][3]
 
-    print("*** Method not implemented: %s at line %s of %s" % method, line, file_name)
+    print(f"*** Method not implemented: {method} at line {line} of {file_name}")
     sys.exit(1)
 
 

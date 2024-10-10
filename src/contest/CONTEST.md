@@ -165,7 +165,7 @@ To facilitate agent development, we provide code in `distanceCalculator.py` to s
 To get started designing your own agent, we recommend subclassing the `CaptureAgent` class. This provides access to several convenience methods. Some useful methods are:
 
 ```python
-      def getFood(self, gameState):
+      def get_food(self, gameState):
         """
         Returns the food you're meant to eat. This is in the form
         of a matrix where m[x][y]=true if there is food you can
@@ -192,7 +192,7 @@ To get started designing your own agent, we recommend subclassing the `CaptureAg
         the numbers of the agents (e.g., red might be "1,3,5")
         """
 
-      def getScore(self, gameState):
+      def get_score(self, gameState):
         """
         Returns how much you are beating the other team by in the
         form of a number that is the difference between your score

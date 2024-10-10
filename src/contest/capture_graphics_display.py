@@ -12,6 +12,7 @@
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
 
 import os
+import math
 from contest.game import Directions
 from contest.graphics_utils import *
 
@@ -24,15 +25,15 @@ from contest.graphics_utils import *
 
 DEFAULT_GRID_SIZE = 30.0
 INFO_PANE_HEIGHT = 35
-BACKGROUND_COLOR = formatColor(0, 0, 0)
-WALL_COLOR = formatColor(0.0 / 255.0, 51.0 / 255.0, 255.0 / 255.0)
-INFO_PANE_COLOR = formatColor(.4, .4, 0)
-SCORE_COLOR = formatColor(.9, .9, .9)
+BACKGROUND_COLOR = format_color(0, 0, 0)
+WALL_COLOR = format_color(0.0 / 255.0, 51.0 / 255.0, 255.0 / 255.0)
+INFO_PANE_COLOR = format_color(.4, .4, 0)
+SCORE_COLOR = format_color(.9, .9, .9)
 PACMAN_OUTLINE_WIDTH = 2
 PACMAN_CAPTURE_OUTLINE_WIDTH = 4
 
-GHOST_COLORS = [formatColor(.9, 0, 0), formatColor(0, .3, .9), formatColor(.98, .41, .07),
-                formatColor(.1, .75, .7), formatColor(1.0, 0.6, 0.0), formatColor(.4, 0.13, 0.91)]
+GHOST_COLORS = [format_color(.9, 0, 0), format_color(0, .3, .9), format_color(.98, .41, .07),
+                format_color(.1, .75, .7), format_color(1.0, 0.6, 0.0), format_color(.4, 0.13, 0.91)]
 
 TEAM_COLORS = GHOST_COLORS[:2]
 
@@ -50,25 +51,25 @@ GHOST_SHAPE = [
     (-0.25, 0.75)
 ]
 GHOST_SIZE = 0.65
-SCARED_COLOR = formatColor(1, 1, 1)
+SCARED_COLOR = format_color(1, 1, 1)
 
-# GHOST_VEC_COLORS = map(colorToVector, GHOST_COLORS)
-GHOST_VEC_COLORS = [colorToVector(c) for c in GHOST_COLORS]
+# GHOST_VEC_COLORS = map(color_to_vector, GHOST_COLORS)
+GHOST_VEC_COLORS = [color_to_vector(c) for c in GHOST_COLORS]
 
-PACMAN_COLOR = formatColor(255.0 / 255.0, 255.0 / 255.0, 61.0 / 255)
+PACMAN_COLOR = format_color(255.0 / 255.0, 255.0 / 255.0, 61.0 / 255)
 PACMAN_SCALE = 0.5
 # pacman_speed = 0.25
 
 # Food
-FOOD_COLOR = formatColor(1, 1, 1)
+FOOD_COLOR = format_color(1, 1, 1)
 FOOD_SIZE = 0.1
 
 # Laser
-LASER_COLOR = formatColor(1, 0, 0)
+LASER_COLOR = format_color(1, 0, 0)
 LASER_SIZE = 0.02
 
 # Capsule graphics
-CAPSULE_COLOR = formatColor(1, 1, 1)
+CAPSULE_COLOR = format_color(1, 1, 1)
 CAPSULE_SIZE = 0.25
 
 # Drawing walls
@@ -360,7 +361,7 @@ class PacmanGraphics:
             width = PACMAN_CAPTURE_OUTLINE_WIDTH
 
         return [circle(screen_point, PACMAN_SCALE * self.grid_size,
-                       fillColor=fill_color, outlineColor=outline_color,
+                       fill_color=fill_color, outline_color=outline_color,
                        endpoints=endpoints,
                        width=width)]
 
@@ -384,7 +385,7 @@ class PacmanGraphics:
         screen_position = self.to_screen(position)
         endpoints = self.get_endpoints(direction, position)
         r = PACMAN_SCALE * self.grid_size
-        moveCircle(image[0], screen_position, r, endpoints)
+        move_circle(image[0], screen_position, r, endpoints)
         refresh()
 
     def animate_pacman(self, pacman, prev_pacman, image):
@@ -423,8 +424,8 @@ class PacmanGraphics:
 
         colour = self.get_ghost_color(ghost, agent_index)
         body = polygon(coords, colour, filled=1)
-        WHITE = formatColor(1.0, 1.0, 1.0)
-        BLACK = formatColor(0.0, 0.0, 0.0)
+        WHITE = format_color(1.0, 1.0, 1.0)
+        BLACK = format_color(0.0, 0.0, 0.0)
 
         dx = 0
         dy = 0
@@ -466,18 +467,18 @@ class PacmanGraphics:
             dx = 0.2
         if direction == 'West':
             dx = -0.2
-        moveCircle(eyes[0], (screen_x + self.grid_size * GHOST_SIZE * (-0.3 + dx / 1.5),
-                             screen_y - self.grid_size * GHOST_SIZE * (0.3 - dy / 1.5)),
-                   self.grid_size * GHOST_SIZE * 0.2)
-        moveCircle(eyes[1], (screen_x + self.grid_size * GHOST_SIZE * (0.3 + dx / 1.5),
-                             screen_y - self.grid_size * GHOST_SIZE * (0.3 - dy / 1.5)),
-                   self.grid_size * GHOST_SIZE * 0.2)
-        moveCircle(eyes[2], (
+        move_circle(eyes[0], (screen_x + self.grid_size * GHOST_SIZE * (-0.3 + dx / 1.5),
+                              screen_y - self.grid_size * GHOST_SIZE * (0.3 - dy / 1.5)),
+                    self.grid_size * GHOST_SIZE * 0.2)
+        move_circle(eyes[1], (screen_x + self.grid_size * GHOST_SIZE * (0.3 + dx / 1.5),
+                              screen_y - self.grid_size * GHOST_SIZE * (0.3 - dy / 1.5)),
+                    self.grid_size * GHOST_SIZE * 0.2)
+        move_circle(eyes[2], (
             screen_x + self.grid_size * GHOST_SIZE * (-0.3 + dx), screen_y - self.grid_size * GHOST_SIZE * (0.3 - dy)),
-                   self.grid_size * GHOST_SIZE * 0.08)
-        moveCircle(eyes[3], (
+                    self.grid_size * GHOST_SIZE * 0.08)
+        move_circle(eyes[3], (
             screen_x + self.grid_size * GHOST_SIZE * (0.3 + dx), screen_y - self.grid_size * GHOST_SIZE * (0.3 - dy)),
-                   self.grid_size * GHOST_SIZE * 0.08)
+                    self.grid_size * GHOST_SIZE * 0.08)
 
     def move_ghost(self, ghost, ghost_index, prev_ghost, ghost_image_parts):
         old_x, old_y = self.to_screen(self.get_position(prev_ghost))
@@ -652,7 +653,7 @@ class PacmanGraphics:
                     screen = self.to_screen((xNum, yNum))
                     dot = circle(screen,
                                  FOOD_SIZE * self.grid_size,
-                                 outlineColor=color, fillColor=color,
+                                 outline_color=color, fill_color=color,
                                  width=1)
                     image_row.append(dot)
                 else:
@@ -665,8 +666,8 @@ class PacmanGraphics:
             (screen_x, screen_y) = self.to_screen(capsule)
             dot = circle((screen_x, screen_y),
                          CAPSULE_SIZE * self.grid_size,
-                         outlineColor=CAPSULE_COLOR,
-                         fillColor=CAPSULE_COLOR,
+                         outline_color=CAPSULE_COLOR,
+                         fill_color=CAPSULE_COLOR,
                          width=1)
             capsule_images[capsule] = dot
         return capsule_images
@@ -686,8 +687,8 @@ class PacmanGraphics:
         screen = self.to_screen(pos)
         dot = circle(screen,
                      FOOD_SIZE * self.grid_size,
-                     outlineColor=color,
-                     fillColor=color,
+                     outline_color=color,
+                     fill_color=color,
                      width=1)
         food_images[x][y] = dot
         pass
@@ -706,7 +707,7 @@ class PacmanGraphics:
         self.expanded_cells = []
         for k, cell in enumerate(cells):
             screen_pos = self.to_screen(cell)
-            cell_color = formatColor(*[(n - k) * c * .5 / n + .25 for c in base_color])
+            cell_color = format_color(*[(n - k) * c * .5 / n + .25 for c in base_color])
             block = square(screen_pos,
                            0.5 * self.grid_size,
                            color=cell_color,
@@ -728,7 +729,7 @@ class PacmanGraphics:
 
         for k, cell in enumerate(cells):
             screen_pos = self.to_screen(cell)
-            cell_color = formatColor(*color)
+            cell_color = format_color(*color)
             block = square(screen_pos,
                            0.5 * self.grid_size,
                            color=cell_color,
@@ -759,18 +760,17 @@ class PacmanGraphics:
                 if self.capture: colors = GHOST_VEC_COLORS
                 for weight, g_color in zip(weights, colors):
                     color = [min(1.0, c + 0.95 * g * weight ** .3) for c, g in zip(color, g_color)]
-                changeColor(image, formatColor(*color))
+                change_color(image, format_color(*color))
         refresh()
 
 
 class FirstPersonPacmanGraphics(PacmanGraphics):
     def __init__(self, zoom=1.0, show_ghosts=True, capture=False, frame_time=0):
-        PacmanGraphics.__init__(self, zoom, frame_time=frame_time)
+        # PacmanGraphics.__init__(self, zoom, frame_time=frame_time)
         self.show_ghosts = show_ghosts
         self.capture = capture
 
     def initialize(self, state, is_blue=False):
-
         self.is_blue = is_blue
         PacmanGraphics.start_graphics(self, state)
         # Initialize distribution images
@@ -792,7 +792,7 @@ class FirstPersonPacmanGraphics(PacmanGraphics):
         else:
             pass
             # Draw relevant ghosts
-            all_ghosts = state.getGhostStates()
+            all_ghosts = state.get_ghost_states()
             visible_ghosts = state.getVisibleGhosts()
             for i, ghost in enumerate(all_ghosts):
                 if ghost in visible_ghosts:
@@ -832,4 +832,4 @@ def save_frame():
     if not os.path.exists(POSTSCRIPT_OUTPUT_DIR): os.mkdir(POSTSCRIPT_OUTPUT_DIR)
     name = os.path.join(POSTSCRIPT_OUTPUT_DIR, 'frame_%08d.ps' % FRAME_NUMBER)
     FRAME_NUMBER += 1
-    writePostscript(name)  # writes the current canvas
+    write_postscript(name)  # writes the current canvas

@@ -169,7 +169,7 @@ class GameState:
         return half_list(self.data.capsules, self.data.food, red=False)
 
     def get_walls(self):
-        """Just like getFood but for walls"""
+        """Just like get_food but for walls"""
         return self.data.layout.walls
 
     def has_food(self, x, y):
@@ -299,11 +299,11 @@ class GameState:
         # This is usually 60 (always 60 with random maps)
         # However, if layout map is specified otherwise, it could be less
         global TOTAL_FOOD
-        TOTAL_FOOD = layout.totalFood
+        TOTAL_FOOD = layout.total_food
 
     def is_red(self, config_or_pos):
         width = self.data.layout.width
-        if config_or_pos is (0, 0):
+        if config_or_pos is tuple:
             return config_or_pos[0] < width // 2
         else:
             return config_or_pos.pos[0] < width // 2
@@ -799,9 +799,9 @@ def read_command(argv):
                       help=default('Zoom in the graphics'), default=1)
     parser.add_option('-i', '--time', type='int', dest='time',
                       help=default('TIME limit of a game in moves'), default=1200, metavar='TIME')
-    parser.add_option('-n', '--numGames', type='int', dest="num_games", help=default('Number of games to play'),
+    parser.add_option('-n', '--num_games', type='int', dest="num_games", help=default('Number of games to play'),
                       default=1)
-    parser.add_option('-f', '--fixRandomSeed', dest="fix_random_seed", action='store_true',
+    parser.add_option('-f', '--fix_random_seed', dest="fix_random_seed", action='store_true',
                       help='Fixes the random seed to always play the same game', default=False)
     parser.add_option('--setRandomSeed', dest="set_random_seed", type='str',
                       help='Sets the random seed to a the given string')
@@ -816,11 +816,11 @@ def read_command(argv):
                       help='Replays a recorded game file without display to generate result log.')
     parser.add_option('--delay-step', type='float', dest='delay_step',
                       help=default('Delay step in a play or replay.'), default=0.03)
-    parser.add_option('-x', '--numTraining', dest='num_training', type='int',
+    parser.add_option('-x', '--num_training', dest='num_training', type='int',
                       help=default('How many episodes are training (suppresses output)'), default=0)
     parser.add_option('-c', '--catch-exceptions', dest='catch_exceptions', action='store_true', default=False,
                       help='Catch exceptions and enforce time limits')
-    parser.add_option('-m', '--match-id', dest='match_id', type='int', default=0,
+    parser.add_option('-m', '--match-identifier', dest='match_id', type='int', default=0,
                       help='Set the gameplay identifier')
     parser.add_option('-u', '--contest-name', dest='contest_name', type=str, default="default",
                       help="Set the contest name")
@@ -857,7 +857,7 @@ def read_command(argv):
     args['red_team_name'] = parsed_options.red_name
     args['blue_team_name'] = parsed_options.blue_name
 
-    # Special case: recorded games don't use the runGames method or args structure
+    # Special case: recorded games don't use the run_games method or args structure
     if parsed_options.replay is not None:
         print(f'Replaying recorded game {parsed_options.replay}.')
         import pickle
@@ -870,7 +870,7 @@ def read_command(argv):
         replay_game(**recorded)
         sys.exit(0)
 
-    # Special case: recorded games don't use the runGames method or args structure
+    # Special case: recorded games don't use the run_games method or args structure
     if parsed_options.replayq is not None:
         print(f'Replaying recorded game {parsed_options.replay}.')
         import pickle
@@ -965,7 +965,7 @@ def random_layout(seed=None):
     # layout = 'layouts/random%08dCapture.lay' % seed
     # print 'Generating random layout in %s' % layout
     import contest.maze_generator as maze_generator
-    return f'RANDOM{seed}', maze_generator.generateMaze(seed)
+    return f'RANDOM{seed}', maze_generator.generate_maze(seed)
 
 
 def load_agents(is_red, agent_file, cmd_line_args):

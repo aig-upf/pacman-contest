@@ -13,8 +13,7 @@
 
 
 import sys, random
-
-import contest.maze_generator
+import contest.maze_generator as maze_generator
 
 """
 This is a helper file which generates the random seeds for the map
@@ -26,8 +25,8 @@ if __name__=="__main__":
   if len(sys.argv) > 1: # command line argument: number of maps to generate
     num = int(sys.argv[1])
 
-  seedsfile = '../driver/SEEDS'
-  with open(seedsfile,'w') as out:
+  seeds_file = '../driver/SEEDS'
+  with open(seeds_file, 'w') as out:
     pass
 
   for i in range(num):
@@ -35,11 +34,11 @@ if __name__=="__main__":
     layout = 'layouts/random%08dCapture.lay' % seed
     print('Generating random layout in %s' % layout)
     with open(layout, 'w') as out:
-      maze = mazeGenerator.generateMaze(seed)
+      maze = maze_generator.generate_maze(seed)
       out.write(maze)
       print(maze)
 
-    with open(seedsfile, 'a') as out:
+    with open(seeds_file, 'a') as out:
       out.write("%d\n"%seed)
 
 

@@ -14,7 +14,7 @@ import re
 
 # Settings
 REPLAYS_FOLDER = "replays"
-PYTHON_BIN = "python3.6"
+PYTHON_BIN = "python3.8"
 
 # Constants
 DIR_SCRIPT = sys.path[0]

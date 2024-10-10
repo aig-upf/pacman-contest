@@ -24,7 +24,7 @@ repeat recursively for each sub-grid
 
 pacman details:
 players 1,3 always start in the bottom left; 2,4 in the top right
-food is placed in dead ends and then randomly (though not too close to the pacmen starting positions)
+food is placed in dead ends and then randomly (though not too close to the pacman starting positions)
 
 notes:
 the final map includes a symmetric, flipped copy
@@ -48,7 +48,7 @@ class Maze:
     """
     self.r = rows
     self.c = cols
-    self.grid = [[E for col in range(cols)] for row in range(rows)]
+    self.grid = [[E for _ in range(cols)] for _ in range(rows)]
     self.anchor = anchor
     self.rooms = []
     self.root = root
@@ -70,8 +70,8 @@ class Maze:
     for row in range(self.r):
       self.grid[row] = [W] + self.grid[row] + [W]
     self.c += 2
-    self.grid.insert(0, [W for c in range(self.c)])
-    self.grid.append([W for c in range(self.c)])
+    self.grid.insert(0, [W for _ in range(self.c)])
+    self.grid.append([W for _ in range(self.c)])
     self.r += 2
 
   def __str__(self):
@@ -118,17 +118,17 @@ class Maze:
 
     return 1
 
-def make_with_prison(room, depth, gaps=1, vert=True, min_width=1, gapfactor=0.5):
+def make_with_prison(room, depth, gaps=1, vert=True, min_width=1, gap_factor=0.5):
   """
   Build a maze with 0,1,2 layers of prison (randomly)
   """
-  p = random.randint(0,2)
-  proll = random.random()
-  if proll < 0.5:
+  # p = random.randint(0,2)
+  p_roll = random.random()
+  if p_roll < 0.5:
     p = 1
-  elif proll < 0.7:
+  elif p_roll < 0.7:
     p = 0
-  elif proll < 0.9:
+  elif p_roll < 0.9:
     p = 2
   else:
     p = 3
@@ -147,11 +147,11 @@ def make_with_prison(room, depth, gaps=1, vert=True, min_width=1, gapfactor=0.5)
 
   room.rooms.append(Maze(room.r, room.c-(2*p), (add_r, add_c+(2*p)), room.root))
   for sub_room in room.rooms:
-    make(sub_room, depth+1, gaps, vert, min_width, gapfactor)
+    make(sub_room, depth + 1, gaps, vert, min_width, gap_factor)
 
   return 2*p
 
-def make(room, depth, gaps=1, vert=True, min_width=1, gapfactor=0.5):
+def make(room, depth, gaps=1, vert=True, min_width=1, gap_factor=0.5):
   """
   recursively build a maze
   TODO: randomize number of gaps?
@@ -179,8 +179,7 @@ def make(room, depth, gaps=1, vert=True, min_width=1, gapfactor=0.5):
   # if random.random() < 0.8:
   #     vert = not vert
   for sub_room in room.rooms:
-    make(sub_room, depth+1, max(1,gaps*gapfactor), not vert,
-         min_width, gapfactor)
+    make(sub_room, depth + 1, max(1, gaps * gap_factor), not vert, min_width, gap_factor)
   # for sub_room in room.rooms:
   #     make(sub_room, depth+1, max(1,gaps/2), not vert, min_width)
 
@@ -192,9 +191,9 @@ def copy_grid(grid):
       new_grid[row].append(grid[row][col])
   return new_grid
 
-def add_pacman_stuff(maze, max_food=60, max_capsules=4, toskip=0):
+def add_pacman_stuff(maze, max_food=60, max_capsules=4, to_skip=0):
   """
-  add pacmen starting position
+  add pacman starting position
   add food at dead ends plus some extra
   """
 
@@ -209,20 +208,20 @@ def add_pacman_stuff(maze, max_food=60, max_capsules=4, toskip=0):
     depth += 1
     num_added = 0
     for row in range(1, maze.r-1):
-      for col in range(1+toskip, (maze.c//2)-1):
+      for col in range(1 + to_skip, (maze.c // 2) - 1):
         if (row > maze.r-6) and (col < 6): continue
         if maze.grid[row][col] != E: continue
         neighbors = (maze.grid[row-1][col]==E) + (maze.grid[row][col-1]==E) + (maze.grid[row+1][col]==E) + (maze.grid[row][col+1]==E)
         if neighbors == 1:
           new_grid[row][col] = F
-          new_grid[maze.r-row-1][maze.c-(col)-1] = F
+          new_grid[maze.r-row-1][maze.c - col - 1] = F
           num_added += 2
           total_food += 2
     maze.grid = new_grid
     if num_added == 0: break
     if depth >= max_depth: break
 
-  ## starting pacmen positions
+  ## starting pacman positions
   maze.grid[maze.r-2][1] = '3'
   maze.grid[maze.r-3][1] = '1'
   maze.grid[1][maze.c-2] = '4'
@@ -232,34 +231,34 @@ def add_pacman_stuff(maze, max_food=60, max_capsules=4, toskip=0):
   total_capsules = 0
   while total_capsules < max_capsules:
     row = random.randint(1, maze.r-1)
-    col = random.randint(1+toskip, (maze.c//2)-2)
+    col = random.randint(1 + to_skip, (maze.c // 2) - 2)
     if (row > maze.r-6) and (col < 6): continue
-    if(abs(col - maze.c/2) < 3): continue
+    if abs(col - maze.c / 2) < 3: continue
     if maze.grid[row][col] == E:
       maze.grid[row][col] = C
-      maze.grid[maze.r-row-1][maze.c-(col)-1] = C
+      maze.grid[maze.r-row-1][maze.c - col - 1] = C
       total_capsules += 2
 
   ## extra random food
   while total_food < max_food:
     row = random.randint(1, maze.r-1)
-    col = random.randint(1+toskip, (maze.c//2)-1)
+    col = random.randint(1 + to_skip, (maze.c // 2) - 1)
     if (row > maze.r-6) and (col < 6): continue
-    if(abs(col - maze.c//2) < 3): continue
+    if abs(col - maze.c // 2) < 3: continue
     if maze.grid[row][col] == E:
       maze.grid[row][col] = F
-      maze.grid[maze.r-row-1][maze.c-(col)-1] = F
+      maze.grid[maze.r-row-1][maze.c - col - 1] = F
       total_food += 2
 
 MAX_DIFFERENT_MAZES = 10000
 
-def generateMaze(seed = None):
+def generate_maze(seed = None):
   if not seed:
     seed = random.randint(1,MAX_DIFFERENT_MAZES)
   random.seed(seed)
   maze = Maze(16,16)
-  gapfactor = min(0.65,random.gauss(0.5,0.1))
-  skip = make_with_prison(maze, depth=0, gaps=3, vert=True, min_width=1, gapfactor=gapfactor)
+  gap_factor = min(0.65,random.gauss(0.5,0.1))
+  skip = make_with_prison(maze, depth=0, gaps=3, vert=True, min_width=1, gap_factor=gap_factor)
   maze.to_map()
   add_pacman_stuff(maze, 2*(maze.r*maze.c//20), 4, skip)
   return str(maze)
@@ -268,4 +267,4 @@ if __name__ == '__main__':
   seed = None
   if len(sys.argv) > 1:
     seed = int(sys.argv[1])
-  print(generateMaze(seed))
+  print(generate_maze(seed))

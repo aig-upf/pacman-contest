@@ -27,36 +27,35 @@ class KeyboardAgent(Agent):
     SOUTH_KEY = 's'
     STOP_KEY = 'q'
 
-    def __init__( self, index = 0 ):
-
-        self.lastMove = Directions.STOP
-        self.index = index
+    def __init__(self, index=0):
+        super().__init__(index)
+        self.last_move = Directions.STOP
         self.keys = []
 
     def get_action(self, state):
         from graphics_utils import keys_waiting
         from graphics_utils import keys_pressed
         keys = list(keys_waiting()) + list(keys_pressed())
-        if keys != []:
+        if keys:
             self.keys = keys
 
         legal = state.get_legal_actions(self.index)
-        move = self.getMove(legal)
+        move = self.get_move(legal)
 
         if move == Directions.STOP:
             # Try to move in the same direction as before
-            if self.lastMove in legal:
-                move = self.lastMove
+            if self.last_move in legal:
+                move = self.last_move
 
         if (self.STOP_KEY in self.keys) and Directions.STOP in legal: move = Directions.STOP
 
         if move not in legal:
             move = random.choice(legal)
 
-        self.lastMove = move
+        self.last_move = move
         return move
 
-    def getMove(self, legal):
+    def get_move(self, legal):
         move = Directions.STOP
         if   (self.WEST_KEY in self.keys or 'Left' in self.keys) and Directions.WEST in legal:  move = Directions.WEST
         if   (self.EAST_KEY in self.keys or 'Right' in self.keys) and Directions.EAST in legal: move = Directions.EAST
@@ -75,7 +74,7 @@ class KeyboardAgent2(KeyboardAgent):
     SOUTH_KEY = 'k'
     STOP_KEY = 'u'
 
-    def getMove(self, legal):
+    def get_move(self, legal):
         move = Directions.STOP
         if   (self.WEST_KEY in self.keys) and Directions.WEST in legal:  move = Directions.WEST
         if   (self.EAST_KEY in self.keys) and Directions.EAST in legal: move = Directions.EAST

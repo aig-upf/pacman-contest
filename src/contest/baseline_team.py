@@ -146,7 +146,7 @@ class OffensiveReflexAgent(ReflexCaptureAgent):
         features = util.Counter()
         successor = self.get_successor(game_state, action)
         food_list = self.get_food(successor).as_list()
-        features['successor_score'] = -len(food_list)  # self.getScore(successor)
+        features['successor_score'] = -len(food_list)  # self.get_score(successor)
 
         # Compute distance to the nearest food
 

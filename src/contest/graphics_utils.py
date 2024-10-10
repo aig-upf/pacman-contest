@@ -13,11 +13,7 @@
 
 
 import sys
-import math
-import random
-import string
 import time
-import types
 import tkinter
 import os.path
 
@@ -33,10 +29,10 @@ _canvas_col = None      # Current colour (set to black below)
 _canvas_tsize = 12
 _canvas_tserifs = 0
 
-def formatColor(r, g, b):
+def format_color(r, g, b):
     return '#%02x%02x%02x' % (int(r * 255), int(g * 255), int(b * 255))
 
-def colorToVector(color):
+def color_to_vector(color):
     return list(map(lambda x: int(x, 16) / 256.0, [color[1:3], color[3:5], color[5:7]]))
 
 if _Windows:
@@ -47,14 +43,14 @@ else:
 
 def sleep(secs):
     global _root_window
-    if _root_window == None:
+    if _root_window is None:
         time.sleep(secs)
     else:
         _root_window.update_idletasks()
         _root_window.after(int(1000 * secs), _root_window.quit)
         _root_window.mainloop()
 
-def begin_graphics(width=640, height=480, color=formatColor(0, 0, 0), title=None):
+def begin_graphics(width=640, height=480, color=format_color(0, 0, 0), title=None):
 
     global _root_window, _canvas, _canvas_x, _canvas_y, _canvas_xs, _canvas_ys, _bg_color
 
@@ -116,15 +112,15 @@ def wait_for_click():
         global _leftclick_loc
         global _rightclick_loc
         global _ctrl_leftclick_loc
-        if _leftclick_loc != None:
+        if _leftclick_loc is not None:
             val = _leftclick_loc
             _leftclick_loc = None
             return val, 'left'
-        if _rightclick_loc != None:
+        if _rightclick_loc is not None:
             val = _rightclick_loc
             _rightclick_loc = None
             return val, 'right'
-        if _ctrl_leftclick_loc != None:
+        if _ctrl_leftclick_loc is not None:
             val = _ctrl_leftclick_loc
             _ctrl_leftclick_loc = None
             return val, 'ctrl_left'
@@ -132,7 +128,7 @@ def wait_for_click():
 
 def draw_background():
     corners = [(0,0), (0, _canvas_ys), (_canvas_xs, _canvas_ys), (_canvas_xs, 0)]
-    polygon(corners, _bg_color, fillColor=_bg_color, filled=True, smoothed=False)
+    polygon(corners, _bg_color, fill_color=_bg_color, filled=True, smoothed=False)
 
 def _destroy_window(event=None):
     sys.exit(0)
@@ -163,14 +159,14 @@ def clear_screen(background=None):
     draw_background()
     _canvas_x, _canvas_y = 0, _canvas_ys
 
-def polygon(coords, outlineColor, fillColor=None, filled=1, smoothed=1, behind=0, width=1):
+def polygon(coords, outline_color, fill_color=None, filled=1, smoothed=1, behind=0, width=1):
     c = []
     for coord in coords:
         c.append(coord[0])
         c.append(coord[1])
-    if fillColor == None: fillColor = outlineColor
-    if filled == 0: fillColor = ""
-    poly = _canvas.create_polygon(c, outline=outlineColor, fill=fillColor, smooth=smoothed, width=width)
+    if fill_color is None: fill_color = outline_color
+    if filled == 0: fill_color = ""
+    poly = _canvas.create_polygon(c, outline=outline_color, fill=fill_color, smooth=smoothed, width=width)
     if behind > 0:
         _canvas.tag_lower(poly, behind) # Higher should be more visible
     return poly
@@ -180,17 +176,17 @@ def square(pos, r, color, filled=1, behind=0):
     coords = [(x - r, y - r), (x + r, y - r), (x + r, y + r), (x - r, y + r)]
     return polygon(coords, color, color, filled, 0, behind=behind)
 
-def circle(pos, r, outlineColor, fillColor=None, endpoints=None, style='pieslice', width=2):
+def circle(pos, r, outline_color, fill_color=None, endpoints=None, style='pieslice', width=2):
     x, y = pos
     x0, x1 = x - r - 1, x + r
     y0, y1 = y - r - 1, y + r
-    if endpoints == None:
+    if endpoints is None:
         e = [0, 359]
     else:
         e = list(endpoints)
     while e[0] > e[1]: e[1] = e[1] + 360
 
-    return _canvas.create_arc(x0, y0, x1, y1, outline=outlineColor, fill=fillColor or outlineColor,
+    return _canvas.create_arc(x0, y0, x1, y1, outline=outline_color, fill=fill_color or outline_color,
                               extent=e[1] - e[0], start=e[0], style=style, width=width)
 
 def image(pos, file="../../blueghost.gif"):
@@ -202,7 +198,7 @@ def image(pos, file="../../blueghost.gif"):
 def refresh():
     _canvas.update_idletasks()
 
-def moveCircle(id, pos, r, endpoints=None):
+def move_circle(identifier, pos, r, endpoints=None):
     global _canvas_x, _canvas_y
 
     x, y = pos
@@ -210,21 +206,21 @@ def moveCircle(id, pos, r, endpoints=None):
 #    y0, y1 = y - r, y + r + 1
     x0, x1 = x - r - 1, x + r
     y0, y1 = y - r - 1, y + r
-    if endpoints == None:
+    if endpoints is None:
         e = [0, 359]
     else:
         e = list(endpoints)
     while e[0] > e[1]: e[1] = e[1] + 360
 
     if os.path.isfile('flag'):
-        edit(id, ('extent', e[1] - e[0]))
+        edit(identifier, ('extent', e[1] - e[0]))
     else:
-        edit(id, ('start', e[0]), ('extent', e[1] - e[0]))
-    move_to(id, x0, y0)
+        edit(identifier, ('start', e[0]), ('extent', e[1] - e[0]))
+    move_to(identifier, x0, y0)
 
 
-def edit(id, *args):
-    _canvas.itemconfigure(id, **dict(args))
+def edit(identifier, *args):
+    _canvas.itemconfigure(identifier, **dict(args))
 
 
 def create_text(pos, color, contents, font='Helvetica', size=12, style='normal', anchor="nw"):
@@ -233,15 +229,15 @@ def create_text(pos, color, contents, font='Helvetica', size=12, style='normal',
     font = (font, str(size), style)
     return _canvas.create_text(x, y, fill=color, text=contents, font=font, anchor=anchor)
 
-def change_text(id, newText, font=None, size=12, style='normal'):
-    _canvas.itemconfigure(id, text=newText)
-    if font != None:
-        _canvas.itemconfigure(id, font=(font, '-%d' % size, style))
+def change_text(identifier, new_text, font=None, size=12, style='normal'):
+    _canvas.itemconfigure(identifier, text=new_text)
+    if font is not None:
+        _canvas.itemconfigure(identifier, font=(font, '-%d' % size, style))
 
-def changeColor(id, newColor):
-    _canvas.itemconfigure(id, fill=newColor)
+def change_color(identifier, new_color):
+    _canvas.itemconfigure(identifier, fill=new_color)
 
-def line(here, there, color=formatColor(0, 0, 0), width=2):
+def line(here, there, color=format_color(0, 0, 0), width=2):
     x0, y0 = here[0], here[1]
     x1, y1 = there[0], there[1]
     return _canvas.create_line(x0, y0, x1, y1, fill=color, width=width)
@@ -311,7 +307,7 @@ def keys_waiting():
 
 def wait_for_keys():
     keys = []
-    while keys == []:
+    while not keys:
         keys = keys_pressed()
         sleep(0.05)
     return keys
@@ -336,7 +332,7 @@ def move_to(object, x, y=None,
         except: raise  'incomprehensible coordinates'
 
     horiz = True
-    newCoords = []
+    new_coords = []
     current_x, current_y = _canvas.coords(object)[0:2] # first point
     for coord in  _canvas.coords(object):
         if horiz:
@@ -345,9 +341,9 @@ def move_to(object, x, y=None,
             inc = y - current_y
         horiz = not horiz
 
-        newCoords.append(coord + inc)
+        new_coords.append(coord + inc)
 
-    _canvas.coords(object, *newCoords)
+    _canvas.coords(object, *new_coords)
     d_o_e(d_w)
 
 def move_by(object, x, y=None,
@@ -358,7 +354,7 @@ def move_by(object, x, y=None,
         except: raise Exception('incomprehensible coordinates')
 
     horiz = True
-    newCoords = []
+    new_coords = []
     for coord in  _canvas.coords(object):
         if horiz:
             inc = x
@@ -366,20 +362,20 @@ def move_by(object, x, y=None,
             inc = y
         horiz = not horiz
 
-        newCoords.append(coord + inc)
+        new_coords.append(coord + inc)
 
-    _canvas.coords(object, *newCoords)
+    _canvas.coords(object, *new_coords)
     d_o_e(d_w)
     if lift:
         _canvas.tag_raise(object)
 
-def writePostscript(filename):
-    "Writes the current canvas to a postscript file."
-    psfile = open(filename, 'w')
-    psfile.write(_canvas.postscript(pageanchor='sw',
+def write_postscript(filename):
+    """Writes the current canvas to a postscript file."""
+    ps_file = open(filename, 'w')
+    ps_file.write(_canvas.postscript(pageanchor='sw',
                      y='0.c',
                      x='0.c'))
-    psfile.close()
+    ps_file.close()
 
 ghost_shape = [
     (0, - 0.5),
@@ -399,7 +395,7 @@ if __name__ == '__main__':
     begin_graphics()
     clear_screen()
     ghost_shape = [(x * 10 + 20, y * 10 + 20) for x, y in ghost_shape]
-    g = polygon(ghost_shape, formatColor(1, 1, 1))
+    g = polygon(ghost_shape, format_color(1, 1, 1))
     move_to(g, (50, 50))
-    circle((150, 150), 20, formatColor(0.7, 0.3, 0.0), endpoints=[15, - 15])
+    circle((150, 150), 20, format_color(0.7, 0.3, 0.0), endpoints=[15, - 15])
     sleep(2)

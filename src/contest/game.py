@@ -185,7 +185,7 @@ class Grid:
 
         self.width = width
         self.height = height
-        self.data = [[initial_value for y in range(height)] for x in range(width)]
+        self.data = [[initial_value for _ in range(height)] for _ in range(width)]
         if bit_representation:
             self._unpack_bits(bit_representation)
 
@@ -354,11 +354,11 @@ class Actions:
         if abs(x - x_int) + abs(y - y_int) > Actions.TOLERANCE:
             return [config.get_direction()]
 
-        for dir, vec in Actions._directionsAsList:
+        for direction, vec in Actions._directionsAsList:
             dx, dy = vec
             next_y = y_int + dy
             next_x = x_int + dx
-            if not walls[next_x][next_y]: possible.append(dir)
+            if not walls[next_x][next_y]: possible.append(direction)
 
         return possible
 
@@ -527,7 +527,7 @@ class GameStateData:
                 else:
                     num_ghosts += 1
             self.agent_states.append(AgentState(Configuration(pos, Directions.STOP), is_pacman))
-        self._eaten = [False for a in self.agent_states]
+        self._eaten = [False for _ in self.agent_states]
 
 
 try:

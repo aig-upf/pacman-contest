@@ -12,7 +12,8 @@
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
 
 
-import os, pickle, sys
+import pickle
+import sys
 
 if len(sys.argv) != 3:
   print('Usage: %s stats_file team_name' % sys.argv[0])
