@@ -23,9 +23,9 @@
 import random
 import util
 
-from captureAgents import CaptureAgent
+from capture_agents import CaptureAgent
 from game import Directions
-from util import nearestPoint
+from util import nearest_point
 
 
 #################
@@ -104,7 +104,7 @@ class ReflexCaptureAgent(CaptureAgent):
         """
         successor = game_state.generate_successor(self.index, action)
         pos = successor.get_agent_state(self.index).get_position()
-        if pos != nearestPoint(pos):
+        if pos != nearest_point(pos):
             # Only half a grid position was covered
             return successor.generate_successor(self.index, action)
         else:
