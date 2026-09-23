@@ -178,10 +178,10 @@ class Grid:
 
     The __str__ method constructs an output that is oriented like a pacman board.
     """
+    CELLS_PER_INT = 30
 
     def __init__(self, width, height, initial_value=False, bit_representation=None):
         if initial_value not in [False, True]: raise Exception('Grids can only contain booleans')
-        self.CELLS_PER_INT = 30
 
         self.width = width
         self.height = height
@@ -215,28 +215,34 @@ class Grid:
                 base *= 2
         return hash(h)
 
-    def copy(self):
-        g = Grid(self.width, self.height)
-        g.data = [x[:] for x in self.data]
+    @staticmethod
+    def _from_data(width, height, data):
+        # Optimization: Skip __init__ so copies don't build a width x height
+        # list that would be overwritten immediately
+        g = Grid.__new__(Grid)
+        g.width = width
+        g.height = height
+        g.data = data
         return g
+
+    def copy(self):
+        return Grid._from_data(self.width, self.height, [x[:] for x in self.data])
 
     def deep_copy(self):
         return self.copy()
 
     def shallow_copy(self):
-        g = Grid(self.width, self.height)
-        g.data = self.data
-        return g
+        return Grid._from_data(self.width, self.height, self.data)
 
     def count(self, item=True):
         return sum([x.count(item) for x in self.data])
 
     def as_list(self, key=True):
-        grid_list = []
-        for x in range(self.width):
-            for y in range(self.height):
-                if self[x][y] == key: grid_list.append((x, y))
-        return grid_list
+        # OPTIMIZATION: Use list comprehension with direct data access
+        # Avoids method call overhead of self[x][y] by accessing self.data directly
+        return [(x, y) for x in range(self.width) 
+                for y in range(self.height) 
+                if self.data[x][y] == key]
 
     def pack_bits(self):
         """
@@ -408,7 +414,8 @@ class GameStateData:
     def deep_copy(self):
         state = GameStateData(self)
         state.food = self.food.deep_copy()
-        state.layout = self.layout.deep_copy()
+        # Layout is immutable during gameplay, share reference instead of deep copying
+        state.layout = self.layout
         state._agent_moved = self._agent_moved
         state._food_eaten = self._food_eaten
         state._food_added = self._food_added

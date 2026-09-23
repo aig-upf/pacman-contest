@@ -311,16 +311,17 @@ class GameState:
 
 def make_half_grid(grid, red):
     halfway = grid.width // 2
-    half_grid = Grid(grid.width, grid.height, False)
+    half_grid = Grid(grid.width, grid.height)
+    
     if red:
-        xrange = range(halfway)
+        # For red team: copy only the left half
+        half_grid.data = [grid.data[x][:] if x < halfway else [False] * grid.height 
+                          for x in range(grid.width)]
     else:
-        xrange = range(halfway, grid.width)
-
-    for y in range(grid.height):
-        for x in xrange:
-            if grid[x][y]: half_grid[x][y] = True
-
+        # For blue team: copy only the right half
+        half_grid.data = [[False] * grid.height if x < halfway else grid.data[x][:] 
+                          for x in range(grid.width)]
+    
     return half_grid
 
 
