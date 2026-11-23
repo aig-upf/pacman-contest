@@ -22,12 +22,12 @@ Script `replay.py` provides a flexible way to re-run games stored under `replays
 
 This is an advanced course, so we expect full professionalism and ethical conduct.  Plagiarism is a serious issue. **We trust you; please don't let us down**. The staff take academic misconduct very seriously. Suspected collusion or plagiarism will be dealt with according to the **University Academic Integrity policy**.
 
-We expect every student taking this course to adhere to it **Code of Honour** under which every learner-student should:
+We expect every student taking this course to adhere to its **Code of Honour** under which every learner-student should:
 
 * Submit their own original work.
-* Do not share answers with others.
+* Not share answers with others.
 * Report suspected violations.
-* Engage in any other activities that will dishonestly improve their results or dishonestly improve or damage the results of others.
+* Not engage in any other activities that will dishonestly improve their results or dishonestly improve or damage the results of others.
 
 Unethical behaviour is extremely serious and consequences are painful for everyone. We expect enrolled students/learners to take full **ownership** of your work and **respect** the work of teachers and other students.
 
